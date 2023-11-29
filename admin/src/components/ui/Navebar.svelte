@@ -10,6 +10,8 @@
 	} from 'flowbite-svelte';
 	import Icon from '@iconify/svelte';
 
+	// addded something
+
 	let site = {
 		name: 'Supermarket',
 		href: '/',
@@ -97,9 +99,7 @@
 </Sidebar>
 
 <style>
-
 	button > span {
 		@apply text-admin-textdominant;
 	}
-
 </style>
