@@ -24,7 +24,10 @@
 		</div>
 
 		<div class="flex items-center gap-6">
-			<Icon icon="lets-icons:bell-pin" class="w-6 h-6 transition duration-75 text-orange-500" />
+			<Icon
+				icon="lets-icons:bell-pin"
+				class="w-6 h-6 cursor-pointer transition duration-75 text-orange-500 hover:text-orange-600"
+			/>
 
 			<div class="flex items-center gap-4">
 				<img src="/images/topbar-adminimage.svg" alt="topbar admin profile" />
