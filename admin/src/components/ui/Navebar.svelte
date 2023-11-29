@@ -97,9 +97,7 @@
 </Sidebar>
 
 <style>
-
 	button > span {
 		@apply text-admin-textdominant;
 	}
-
 </style>
