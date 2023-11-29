@@ -16,7 +16,7 @@
 		img: '/icons/adminlogo.svg'
 	};
 
-	let spanClass = 'flex-1 ml-3 p-1 whitespace-nowrap';
+	let spanClass = 'flex-1 ml-3 p-1 whitespace-nowrap text-admin-textdominant';
 
 	let activeClass =
 		'flex items-center p-2 text-base font-bold text-white bg-admin-dominant dark:bg-primary-700 rounded-lg dark:text-white hover:bg-admin-dominant dark:hover:bg-gray-700';
@@ -31,16 +31,24 @@
 	<SidebarWrapper
 		divClass="h-screen overflow-y-auto py-4 px-3 bg-gray-50 dark:bg-gray-800 font-poppins"
 	>
-		<SidebarGroup ulClass="space-y-6">
+		<SidebarGroup ulClass="space-y-6 text-admin-textdominant">
 			<SidebarBrand {site} />
 			<SidebarItem label="Dashboard" href="/dashboard" {spanClass}>
 				<svelte:fragment slot="icon">
 					<Icon icon="fluent:data-pie-24-filled" class="w-5 h-5 transition duration-75" />
 				</svelte:fragment>
 			</SidebarItem>
-			<SidebarDropdownWrapper label="Master" ulClass="space-y-2 p-4 text-admin-textdominant">
+			<SidebarDropdownWrapper
+				label="Master"
+				id="master"
+				ulClass="space-y-2 p-4 text-admin-textdominant"
+			>
 				<svelte:fragment slot="icon">
-					<Icon icon="uis:align-left" rotate={3} class="w-5 h-5 transition duration-75" />
+					<Icon
+						icon="uis:align-left"
+						rotate={3}
+						class="w-5 h-5 transition duration-75 text-admin-textdominant"
+					/>
 				</svelte:fragment>
 				<SidebarItem label="Warehouse" href="/dashboard/warehouse" {spanClass}>
 					<svelte:fragment slot="icon">
@@ -87,3 +95,11 @@
 		</SidebarGroup>
 	</SidebarWrapper>
 </Sidebar>
+
+<style>
+
+	button > span {
+		@apply text-admin-textdominant;
+	}
+
+</style>

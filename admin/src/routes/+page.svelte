@@ -29,7 +29,7 @@
 </svelte:head>
 
 <div class="w-screen h-screen flex flex-col justify-center items-center">
-	<div class="shadow-2xl p-8 rounded-lg border-2 border-gray-200 border-solid w-1/3">
+	<div class="shadow-2xl p-8 rounded-lg border-2 border-gray-200 border-solid w-[20%]">
 		<div class="flex flex-col items-center">
 			<img class="w-16 h-16 rounded-full" src="/icons/adminlogo.svg" alt="logo" />
 
@@ -76,7 +76,7 @@
 					{/if}
 				</div>
 
-				<Button type="submit" class="w-32">Login</Button>
+				<Button type="submit" class="w-32 bg-admin-dominant">Login</Button>
 			</div>
 		</form>
 	</div>
