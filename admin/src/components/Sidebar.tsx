@@ -174,7 +174,7 @@ export function Sidebar() {
               transitionTimingFunction="linear"
             >
               {link && link.subLinks && (
-                <ul className="space-y-4 ml-6">
+                <ul className="space-y-4 ml-6 mt-4">
                   {link.subLinks.map((subLink) => (
                     <li className="list-none" key={subLink.label}>
                       <span

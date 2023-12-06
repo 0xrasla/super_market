@@ -48,9 +48,6 @@ export function Categories() {
       });
     },
     onSuccess: (e: any) => {
-      if (!e.ok) {
-        return;
-      }
       handleToast({
         title: "Success",
         color: "green",
@@ -148,7 +145,15 @@ export function Categories() {
             }
           />
         </Table.Td>
-        <Table.Td>{_data.name}</Table.Td>
+        <Table.Td className="flex gap-2 items-center">
+          <img
+            src={API_URL + "/files/view?path=" + _data.image}
+            alt=""
+            className="cursor-pointer w-10 h-10 rounded-md"
+            crossOrigin="anonymous"
+          />
+          {_data.name}
+        </Table.Td>
         <Table.Td>
           {" "}
           <img
