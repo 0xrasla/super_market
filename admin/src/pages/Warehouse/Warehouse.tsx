@@ -3,11 +3,11 @@ import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import {
   Button,
-  Checkbox,
+  CloseButton,
   Collapse,
   Grid,
   Group,
-  Table,
+  Stack,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -16,23 +16,22 @@ import { useForm } from "@mantine/form";
 import { axios } from "../../config/Axios";
 import _axios from "axios";
 import { AxiosError } from "axios";
-import { FileInput } from "@mantine/core";
-import { API_URL } from "../../config/Constants";
+import { WarehouseTable } from "../../components/Warehouse/Datatable-Warehouse";
 
 export function Warehouse() {
   const {
     data,
     isLoading,
-    refetch: refetchCategories,
+    refetch: refetchWarehouse,
   } = useQuery({
     queryKey: [""],
     queryFn: () =>
-      axios("/categories/all", {}).then((res) => {
+      axios("/warehouse/all", {}).then((res) => {
         return res.data;
       }),
   });
 
-  const categoryAddMutation = useMutation({
+  const warehouseAddMutation = useMutation({
     mutationFn: (values: any) => {
       let formData = new FormData();
 
@@ -48,13 +47,13 @@ export function Warehouse() {
         },
       });
     },
-    onSuccess: (e: any) => {
+    onSuccess: () => {
       handleToast({
         title: "Success",
         color: "green",
         message: "Category added successfully",
       });
-      refetchCategories();
+      refetchWarehouse();
       form.reset();
       setShowForm(false);
     },
@@ -76,13 +75,13 @@ export function Warehouse() {
         method: "DELETE",
       });
     },
-    onSuccess: (e: any) => {
+    onSuccess: () => {
       handleToast({
         title: "Success",
         color: "green",
         message: "Category deleted successfully",
       });
-      refetchCategories();
+      refetchWarehouse();
     },
     onError: (e: AxiosError) => {
       const data: any = e.response?.data;
@@ -94,7 +93,7 @@ export function Warehouse() {
     },
   });
 
-  const [selectedRows] = useState<number[]>([]);
+  const [productFormCount, setProductFormCount] = useState(0);
   const [showForm, setShowForm] = useState(false);
 
   const handleToast = ({
@@ -132,46 +131,13 @@ export function Warehouse() {
     },
   });
 
-  const rows = () => {
-    if (isLoading) return [];
-    return data?.data.map((_data: any) => (
-      <Table.Tr
-        key={_data.name}
-        bg={
-          selectedRows.includes(_data._id)
-            ? "var(--mantine-color-blue-light)"
-            : undefined
-        }
-      >
-        <Table.Td className="flex gap-2 items-center">
-          <img
-            src={API_URL + "/files/view?path=" + _data.image}
-            alt=""
-            className="cursor-pointer w-10 h-10 rounded-md"
-            crossOrigin="anonymous"
-          />
-          {_data.name}
-        </Table.Td>
-        <Table.Td>
-          {" "}
-          <img
-            src="/icons/deleteicon.svg"
-            alt=""
-            className="cursor-pointer"
-            onClick={() => categoryDeleteMutation.mutate(_data._id)}
-          />
-        </Table.Td>
-      </Table.Tr>
-    ));
-  };
-
   const handleAdd = () => {
     if (form.validate().hasErrors) return;
-    categoryAddMutation.mutate(form.values);
+    warehouseAddMutation.mutate(form.values);
   };
 
   return (
-    <div>
+    <div className="w-full overflow-hidden">
       {isLoading ? (
         "Loading..."
       ) : (
@@ -182,147 +148,262 @@ export function Warehouse() {
               transitionDuration={200}
               transitionTimingFunction="linear"
             >
-              <div className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[50%] items-start">
-                <form
-                  onSubmit={form.onSubmit(() => handleAdd())}
-                  encType="multipart/form-data"
-                >
-                  <Title
-                    order={2}
-                    size="h3"
-                    className="font-poppins"
-                    fw={700}
-                    ta="start"
+              <div className="w-full flex">
+                <div className="p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start">
+                  <form
+                    onSubmit={form.onSubmit(() => handleAdd())}
+                    encType="multipart/form-data"
                   >
-                    Add Ware House
-                  </Title>
-                  <Grid>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Name"
-                        placeholder="Warehouse Name"
-                        mt="md"
-                        name="name"
-                        variant="default"
-                        {...form.getInputProps("name")}
-                      />
-                    </Grid.Col>
+                    <div className="flex justify-between">
+                      <div className="flex gap-1 items-center">
+                        <Icon
+                          className="cursor-pointer"
+                          icon="ic:outline-arrow-back"
+                          fontSize={24}
+                          onClick={() => setShowForm(false)}
+                        />
+                        <Title
+                          order={2}
+                          size="h3"
+                          className="font-poppins"
+                          fw={700}
+                          ta="start"
+                        >
+                          Add Ware House
+                        </Title>
+                      </div>
 
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Manager Name"
-                        placeholder="Manager Name"
-                        mt="md"
-                        name="managername"
-                        variant="default"
-                        {...form.getInputProps("managername")}
-                      />
-                    </Grid.Col>
+                      <div className="m-2">
+                        <Button
+                          className="bg-admin-dominant"
+                          rightSection={<Icon icon="material-symbols:add" />}
+                          onClick={() => {
+                            setProductFormCount((e) => e + 1);
+                          }}
+                        >
+                          Add Product
+                        </Button>
+                      </div>
+                    </div>
 
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Location"
-                        placeholder="Lat/Long"
-                        mt="md"
-                        name="location"
-                        variant="default"
-                        {...form.getInputProps("location")}
-                      />
-                    </Grid.Col>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Name"
+                          placeholder="Warehouse Name"
+                          mt="md"
+                          name="name"
+                          variant="default"
+                          {...form.getInputProps("name")}
+                        />
+                      </Grid.Col>
 
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Mobile Number"
-                        placeholder="+91 XXXXXXXXXX"
-                        mt="md"
-                        name="mobile"
-                        variant="default"
-                        {...form.getInputProps("mobile")}
-                      />
-                    </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Manager Name"
+                          placeholder="Manager Name"
+                          mt="md"
+                          name="managername"
+                          variant="default"
+                          {...form.getInputProps("managername")}
+                        />
+                      </Grid.Col>
 
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="City"
-                        placeholder="Nagercoil"
-                        mt="md"
-                        name="city"
-                        variant="default"
-                        {...form.getInputProps("city")}
-                      />
-                    </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Location"
+                          placeholder="Lat/Long"
+                          mt="md"
+                          name="location"
+                          variant="default"
+                          {...form.getInputProps("location")}
+                        />
+                      </Grid.Col>
 
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Address"
-                        placeholder="Address"
-                        mt="md"
-                        name="address"
-                        variant="default"
-                        {...form.getInputProps("address")}
-                      />
-                    </Grid.Col>
-                  </Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Mobile Number"
+                          placeholder="+91 XXXXXXXXXX"
+                          mt="md"
+                          name="mobile"
+                          variant="default"
+                          {...form.getInputProps("mobile")}
+                        />
+                      </Grid.Col>
 
-                  <Group justify="start" mt="xl">
-                    <Button
-                      type="submit"
-                      size="md"
-                      variant="filled"
-                      className="bg-admin-dominant text-white w-full"
-                      leftSection={<Icon icon="material-symbols:add" />}
-                      loading={categoryAddMutation.isPending}
-                      disabled={categoryAddMutation.isPending}
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="City"
+                          placeholder="Nagercoil"
+                          mt="md"
+                          name="city"
+                          variant="default"
+                          {...form.getInputProps("city")}
+                        />
+                      </Grid.Col>
+
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Address"
+                          placeholder="Address"
+                          mt="md"
+                          name="address"
+                          variant="default"
+                          {...form.getInputProps("address")}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Group justify="start" mt="xl">
+                      <Button
+                        type="submit"
+                        size="md"
+                        variant="filled"
+                        className="bg-admin-dominant text-white w-full"
+                        leftSection={<Icon icon="material-symbols:add" />}
+                        loading={warehouseAddMutation.isPending}
+                        disabled={warehouseAddMutation.isPending}
+                      >
+                        {warehouseAddMutation.isPending
+                          ? "Loading..."
+                          : "Save Warehouse"}
+                      </Button>
+                    </Group>
+                  </form>
+                </div>
+
+                <Stack className="w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll">
+                  {Array.from({ length: productFormCount }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start"
                     >
-                      {categoryAddMutation.isPending
-                        ? "Loading..."
-                        : "Save Warehouse"}
-                    </Button>
-                  </Group>
-                </form>
+                      <form
+                        onSubmit={form.onSubmit(() => handleAdd())}
+                        encType="multipart/form-data"
+                      >
+                        <div className="flex justify-between">
+                          <Title
+                            order={2}
+                            size="h3"
+                            className="font-poppins"
+                            fw={700}
+                            ta="start"
+                          >
+                            Add Product ({index + 1})
+                          </Title>
+
+                          <div className="m-2 flex gap-2 items-center">
+                            <CloseButton
+                              onClick={() => {
+                                setProductFormCount((e) => e - 1);
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <Grid>
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="Name"
+                              placeholder="Warehouse Name"
+                              mt="md"
+                              name="name"
+                              variant="default"
+                              {...form.getInputProps("name")}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="Manager Name"
+                              placeholder="Manager Name"
+                              mt="md"
+                              name="managername"
+                              variant="default"
+                              {...form.getInputProps("managername")}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="Location"
+                              placeholder="Lat/Long"
+                              mt="md"
+                              name="location"
+                              variant="default"
+                              {...form.getInputProps("location")}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="Mobile Number"
+                              placeholder="+91 XXXXXXXXXX"
+                              mt="md"
+                              name="mobile"
+                              variant="default"
+                              {...form.getInputProps("mobile")}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="City"
+                              placeholder="Nagercoil"
+                              mt="md"
+                              name="city"
+                              variant="default"
+                              {...form.getInputProps("city")}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="Address"
+                              placeholder="Address"
+                              mt="md"
+                              name="address"
+                              variant="default"
+                              {...form.getInputProps("address")}
+                            />
+                          </Grid.Col>
+                        </Grid>
+
+                        {/* <Group justify="start" mt="xl">
+                          <Button
+                            type="submit"
+                            size="md"
+                            variant="filled"
+                            className="bg-admin-dominant text-white w-full"
+                            leftSection={<Icon icon="material-symbols:add" />}
+                            loading={warehouseAddMutation.isPending}
+                            disabled={warehouseAddMutation.isPending}
+                          >
+                            {warehouseAddMutation.isPending
+                              ? "Loading..."
+                              : "Add Product"}
+                          </Button>
+                        </Group> */}
+                      </form>
+                    </div>
+                  ))}
+                </Stack>
+
+                {/* {productFormCount > 0 && (
+                  <h3 className="px-8 py-4 font-bold font-poppins">
+                    Products : {productFormCount}
+                  </h3>
+                )} */}
               </div>
             </Collapse>
           ) : (
-            <Collapse
-              in={!showForm}
-              transitionDuration={400}
-              transitionTimingFunction="linear"
-            >
-              <div className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[97%] items-start">
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between m-2">
-                    <h2 className="capitalize font-medium text-lg">
-                      Warehouse List
-                    </h2>
-                    <Button className="bg-red-600">Report</Button>
-                  </div>
-
-                  <div className="m-2">
-                    <Button
-                      className="bg-admin-dominant"
-                      rightSection={<Icon icon="material-symbols:add" />}
-                      onClick={() => setShowForm(true)}
-                    >
-                      Create New
-                    </Button>
-                  </div>
-
-                  <Table className="w-full">
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th>Warehouse</Table.Th>
-                        <Table.Th>Name</Table.Th>
-                        <Table.Th>Phone No</Table.Th>
-                        <Table.Th>City</Table.Th>
-                        <Table.Th>Location</Table.Th>
-                        <Table.Th>Address</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>{rows()}</Table.Tbody>
-                  </Table>
-                </div>
-              </div>
-            </Collapse>
+            <WarehouseTable
+              data={data}
+              categoryDeleteMutation={categoryDeleteMutation}
+              isLoading={isLoading}
+              setShowForm={setShowForm}
+            />
           )}
         </div>
       )}

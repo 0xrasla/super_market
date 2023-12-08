@@ -47,7 +47,7 @@ export function Categories() {
         },
       });
     },
-    onSuccess: (e: any) => {
+    onSuccess: () => {
       handleToast({
         title: "Success",
         color: "green",
@@ -75,7 +75,7 @@ export function Categories() {
         method: "DELETE",
       });
     },
-    onSuccess: (e: any) => {
+    onSuccess: () => {
       handleToast({
         title: "Success",
         color: "green",
