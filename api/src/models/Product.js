@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const ProductsSchema = new Schema({
+const ProductSchema = new Schema({
   lotNumber: {
     type: String,
     required: true,
@@ -18,6 +18,11 @@ const ProductsSchema = new Schema({
     ref: "Category",
     required: true,
   },
+  vendor: {
+    type: Schema.Types.ObjectId,
+    ref: "Vendor",
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -30,7 +35,7 @@ const ProductsSchema = new Schema({
     type: String,
     required: true,
   },
-  gst: {
+  expirydate: {
     type: String,
     required: true,
   },
@@ -40,4 +45,4 @@ const ProductsSchema = new Schema({
   },
 });
 
-export default model("Products", ProductsSchema);
+export default model("Product", ProductSchema);
