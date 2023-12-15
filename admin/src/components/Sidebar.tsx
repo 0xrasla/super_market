@@ -128,7 +128,7 @@ export function Sidebar() {
     "bg-admin-dominant rounded-lg text-white transition-all duration-[0.4s]";
 
   return (
-    <div className="h-screen min-w-[300px] overflow-none text-admin-textdominant text-lg bg-gray-100 font-poppins">
+    <div className="h-screen min-w-[300px] overflow-none text-admin-textdominant text-lg bg-gray-200 font-poppins">
       <div className="flex justify-center items-center gap-2 p-4">
         <img src="/icons/adminlogo.svg" alt="" className="w-12" />
         <h2 className="text-2xl text-black capitalize m-4 font-bold">

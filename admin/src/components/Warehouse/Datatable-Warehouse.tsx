@@ -1,6 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Table } from "@mantine/core";
-import { API_URL } from "../../config/Constants";
 
 interface Props {
   data: any;
@@ -11,7 +10,6 @@ interface Props {
 
 export function WarehouseTable({
   data,
-  categoryDeleteMutation,
   isLoading,
   setShowForm,
 }: Props): JSX.Element {
@@ -19,22 +17,24 @@ export function WarehouseTable({
     if (isLoading) return [];
     return data?.data.map((_data: any) => (
       <Table.Tr key={_data.name}>
-        <Table.Td className="flex gap-2 items-center">
-          <img
-            src={API_URL + "/files/view?path=" + _data.image}
-            alt=""
-            className="cursor-pointer w-10 h-10 rounded-md"
-            crossOrigin="anonymous"
-          />
-          {_data.name}
-        </Table.Td>
-        <Table.Td>
-          {" "}
+        <Table.Td className="flex gap-2 items-center">{_data.name}</Table.Td>
+        <Table.Td>{_data.managername}</Table.Td>
+        <Table.Td>{_data.mobilenumber}</Table.Td>
+        <Table.Td>{_data.city}</Table.Td>
+        <Table.Td>{_data.location}</Table.Td>
+        <Table.Td>{_data.address}</Table.Td>
+        <Table.Td className="flex gap-4 items-center">
           <img
             src="/icons/deleteicon.svg"
             alt=""
-            className="cursor-pointer"
-            onClick={() => categoryDeleteMutation.mutate(_data._id)}
+            className="cursor-pointer w-6 h-6"
+            onClick={() => {}}
+          />
+
+          <Icon
+            icon="tabler:edit"
+            color="#00b207"
+            className="cursor-pointer w-6 h-6"
           />
         </Table.Td>
       </Table.Tr>
@@ -63,11 +63,12 @@ export function WarehouseTable({
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Warehouse</Table.Th>
-              <Table.Th>Name</Table.Th>
+              <Table.Th>Manager Name</Table.Th>
               <Table.Th>Phone No</Table.Th>
               <Table.Th>City</Table.Th>
               <Table.Th>Location</Table.Th>
               <Table.Th>Address</Table.Th>
+              <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows()}</Table.Tbody>

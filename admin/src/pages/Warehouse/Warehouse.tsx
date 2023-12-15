@@ -7,6 +7,8 @@ import {
   Collapse,
   Grid,
   Group,
+  NativeSelect,
+  NumberInput,
   Stack,
   TextInput,
   Title,
@@ -31,27 +33,23 @@ export function Warehouse() {
       }),
   });
 
+  const { data: category, isLoading: categoryLoading } = useQuery({
+    queryKey: ["category"],
+    queryFn: () =>
+      axios("/categories/all", {}).then((res) => {
+        return res.data;
+      }),
+  });
+
   const warehouseAddMutation = useMutation({
     mutationFn: (values: any) => {
-      let formData = new FormData();
-
-      formData.append("name", values.name);
-
-      if (values.image) {
-        formData.append("image", values.image);
-      }
-
-      return axios.post("/categories/add", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return axios.post("/warehouse/add", values, {});
     },
     onSuccess: () => {
       handleToast({
         title: "Success",
         color: "green",
-        message: "Category added successfully",
+        message: "Warehouse added successfully",
       });
       refetchWarehouse();
       form.reset();
@@ -71,7 +69,7 @@ export function Warehouse() {
 
   const categoryDeleteMutation = useMutation({
     mutationFn: (id: any) => {
-      return axios(`/categories?id=${id}`, {
+      return axios(`/warehouse?id=${id}`, {
         method: "DELETE",
       });
     },
@@ -79,7 +77,7 @@ export function Warehouse() {
       handleToast({
         title: "Success",
         color: "green",
-        message: "Category deleted successfully",
+        message: "Warehouse deleted successfully",
       });
       refetchWarehouse();
     },
@@ -93,7 +91,6 @@ export function Warehouse() {
     },
   });
 
-  const [productFormCount, setProductFormCount] = useState(0);
   const [showForm, setShowForm] = useState(false);
 
   const handleToast = ({
@@ -112,22 +109,74 @@ export function Warehouse() {
     });
   };
 
+  const productForm = {
+    lotNumber: 0,
+    rackNumber: "",
+    productName: "",
+    category: "",
+    quantity: 0,
+    price: 0,
+    discount: 0,
+    gst: "",
+  };
+
   const form = useForm({
+    validateInputOnChange: true,
     initialValues: {
       name: "",
       managername: "",
       location: "",
-      mobile: "",
+      mobilenumber: "",
       city: "",
       address: "",
+      products: [],
     },
     validate: {
-      name: (value) => value.trim().length < 2,
-      managername: (value) => value.trim().length < 2,
-      location: (value) => value.trim().length < 2,
-      mobile: (value) => !/^\d+$/.test(value) || value.length <= 10,
-      city: (value) => value.trim().length < 2,
-      address: (value) => value.trim().length < 2,
+      name: (value) => (value.trim().length < 2 ? "Invalid name" : null),
+      managername: (value) =>
+        value.trim().length < 2 ? "Invalid manager name" : null,
+      location: (value) =>
+        value.trim().length < 2 ? "Invalid location" : null,
+      mobilenumber: (value) =>
+        value.toString().trim().length < 10 ||
+        value.toString().trim().length > 10
+          ? "Invalid mobile number"
+          : null,
+      city: (value) => (value.trim().length < 2 ? "Invalid city" : null),
+      address: (value) => (value.trim().length < 2 ? "Invalid address" : null),
+      products: (value: any) => {
+        if (value.length > 0) {
+          if (value[0].lotNumber == "") {
+            return "Invalid lot number";
+          }
+
+          if (value[0].rackNumber == "") {
+            return "Invalid rack number";
+          }
+
+          if (value[0].productName == "") {
+            return "Invalid product name";
+          }
+
+          if (value[0].quantity == "") {
+            return "Invalid quantity";
+          }
+
+          if (value[0].price == "") {
+            return "Invalid price";
+          }
+
+          if (value[0].discount == "") {
+            return "Invalid discount";
+          }
+
+          if (value[0].gst == "") {
+            return "Invalid gst";
+          }
+
+          return null;
+        }
+      },
     },
   });
 
@@ -178,7 +227,9 @@ export function Warehouse() {
                           className="bg-admin-dominant"
                           rightSection={<Icon icon="material-symbols:add" />}
                           onClick={() => {
-                            setProductFormCount((e) => e + 1);
+                            form.insertListItem("products", {
+                              ...productForm,
+                            });
                           }}
                         >
                           Add Product
@@ -221,13 +272,13 @@ export function Warehouse() {
                       </Grid.Col>
 
                       <Grid.Col span={6}>
-                        <TextInput
+                        <NumberInput
                           label="Mobile Number"
                           placeholder="+91 XXXXXXXXXX"
                           mt="md"
-                          name="mobile"
+                          name="mobilenumber"
                           variant="default"
-                          {...form.getInputProps("mobile")}
+                          {...form.getInputProps("mobilenumber")}
                         />
                       </Grid.Col>
 
@@ -273,15 +324,12 @@ export function Warehouse() {
                 </div>
 
                 <Stack className="w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll">
-                  {Array.from({ length: productFormCount }).map((_, index) => (
+                  {form.values.products.map((_productform: any, index: any) => (
                     <div
                       key={index}
                       className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start"
                     >
-                      <form
-                        onSubmit={form.onSubmit(() => handleAdd())}
-                        encType="multipart/form-data"
-                      >
+                      <form encType="multipart/form-data">
                         <div className="flex justify-between">
                           <Title
                             order={2}
@@ -296,7 +344,7 @@ export function Warehouse() {
                           <div className="m-2 flex gap-2 items-center">
                             <CloseButton
                               onClick={() => {
-                                setProductFormCount((e) => e - 1);
+                                form.removeListItem("products", index);
                               }}
                             />
                           </div>
@@ -304,97 +352,124 @@ export function Warehouse() {
 
                         <Grid>
                           <Grid.Col span={6}>
-                            <TextInput
-                              label="Name"
-                              placeholder="Warehouse Name"
+                            <NumberInput
+                              label="Lot Number"
+                              placeholder="Lot Number"
                               mt="md"
-                              name="name"
+                              name="lotNumber"
                               variant="default"
-                              {...form.getInputProps("name")}
+                              {...form.getInputProps(
+                                `products.${index}.lotNumber`
+                              )}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <NumberInput
+                              label="Rack Number"
+                              placeholder="Rack Number"
+                              mt="md"
+                              name="rackNumber"
+                              variant="default"
+                              {...form.getInputProps(
+                                `products.${index}.rackNumber`
+                              )}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
                             <TextInput
-                              label="Manager Name"
-                              placeholder="Manager Name"
+                              label="Product Name"
+                              placeholder="Product Name"
                               mt="md"
-                              name="managername"
+                              name="productName"
                               variant="default"
-                              {...form.getInputProps("managername")}
+                              {...form.getInputProps(
+                                `products.${index}.productName`
+                              )}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
-                            <TextInput
-                              label="Location"
-                              placeholder="Lat/Long"
+                            <NativeSelect
+                              label="Category"
+                              disabled={categoryLoading}
+                              placeholder="Category"
                               mt="md"
-                              name="location"
+                              name="category"
                               variant="default"
-                              {...form.getInputProps("location")}
+                              data={
+                                categoryLoading
+                                  ? []
+                                  : [
+                                      {
+                                        value: "",
+                                        label: "Select Category",
+                                      },
+                                      ...category?.data.map((_data: any) => ({
+                                        value: _data._id,
+                                        label: _data.name,
+                                      })),
+                                    ]
+                              }
+                              {...form.getInputProps(
+                                `products.${index}.category`
+                              )}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
-                            <TextInput
-                              label="Mobile Number"
-                              placeholder="+91 XXXXXXXXXX"
+                            <NumberInput
+                              label="Quantity"
+                              placeholder="Quantity"
                               mt="md"
-                              name="mobile"
+                              name="quantity"
                               variant="default"
-                              {...form.getInputProps("mobile")}
+                              {...form.getInputProps(
+                                `products.${index}.quantity`
+                              )}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
-                            <TextInput
-                              label="City"
-                              placeholder="Nagercoil"
+                            <NumberInput
+                              label="Price"
+                              placeholder="Price"
                               mt="md"
-                              name="city"
+                              name="price"
                               variant="default"
-                              {...form.getInputProps("city")}
+                              {...form.getInputProps(`products.${index}.price`)}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
-                            <TextInput
-                              label="Address"
-                              placeholder="Address"
+                            <NumberInput
+                              label="Discount"
+                              placeholder="Discount"
                               mt="md"
-                              name="address"
+                              name="discount"
                               variant="default"
-                              {...form.getInputProps("address")}
+                              {...form.getInputProps(
+                                `products.${index}.discount`
+                              )}
+                            />
+                          </Grid.Col>
+
+                          <Grid.Col span={6}>
+                            <NumberInput
+                              label="GST"
+                              placeholder="GST"
+                              mt="md"
+                              name="gst"
+                              variant="default"
+                              {...form.getInputProps(`products.${index}.gst`)}
                             />
                           </Grid.Col>
                         </Grid>
-
-                        {/* <Group justify="start" mt="xl">
-                          <Button
-                            type="submit"
-                            size="md"
-                            variant="filled"
-                            className="bg-admin-dominant text-white w-full"
-                            leftSection={<Icon icon="material-symbols:add" />}
-                            loading={warehouseAddMutation.isPending}
-                            disabled={warehouseAddMutation.isPending}
-                          >
-                            {warehouseAddMutation.isPending
-                              ? "Loading..."
-                              : "Add Product"}
-                          </Button>
-                        </Group> */}
                       </form>
                     </div>
                   ))}
                 </Stack>
-
-                {/* {productFormCount > 0 && (
-                  <h3 className="px-8 py-4 font-bold font-poppins">
-                    Products : {productFormCount}
-                  </h3>
-                )} */}
               </div>
             </Collapse>
           ) : (

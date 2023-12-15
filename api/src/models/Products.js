@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const ProductsSchema = new Schema({
+const ProductSchema = new Schema({
   lotNumber: {
     type: String,
     required: true,
@@ -16,10 +16,6 @@ const ProductsSchema = new Schema({
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
-  },
-  name: {
-    type: String,
     required: true,
   },
   price: {
@@ -40,4 +36,4 @@ const ProductsSchema = new Schema({
   },
 });
 
-export default model("Products", ProductsSchema);
+export default model("Products", ProductSchema);
