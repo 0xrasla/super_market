@@ -18,10 +18,6 @@ const ProductSchema = new Schema({
     ref: "Category",
     required: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
   price: {
     type: String,
     required: true,

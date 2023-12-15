@@ -1,9 +1,17 @@
 import Warehouse from "../models/Warehouse.js";
+import Products from "../models/Products.js";
 
 export const WarehouseController = {
   createWarehouse: async (req, res) => {
-    const { name, location, managername, mobilenumber, city, address } =
-      req.body;
+    const {
+      name,
+      location,
+      managername,
+      mobilenumber,
+      city,
+      address,
+      products,
+    } = req.body;
 
     try {
       const newWarehouse = {
@@ -15,13 +23,23 @@ export const WarehouseController = {
         address,
       };
 
-      let existing = await Warehouse.findOne({ name });
+      const existing = await Warehouse.findOneAndUpdate(
+        { name },
+        { $setOnInsert: newWarehouse },
+        { upsert: true, new: true }
+      );
 
-      if (existing) {
-        return res.status(409).json({ message: "Warehouse already exists" });
-      }
+      const warehouse = existing;
+      const warehouseProducts = products.map((product) => ({
+        ...product,
+        warehouse: warehouse._id,
+      }));
 
-      const warehouse = await Warehouse.create(newWarehouse);
+      const createdProducts = await Products.insertMany(warehouseProducts);
+      const productIds = createdProducts.map((product) => product._id);
+
+      warehouse.products = productIds;
+      await warehouse.save();
 
       return res.status(201).json({
         message: "Warehouse created successfully",
@@ -42,7 +60,7 @@ export const WarehouseController = {
 
   getWarehouses: async (req, res) => {
     try {
-      const warehouses = await Warehouse.find();
+      const warehouses = await Warehouse.find({});
 
       return res.status(200).json({ data: warehouses, ok: true });
     } catch (e) {

@@ -11,8 +11,6 @@ export const FilesRouter = Router().get("/view", (req, res) => {
 
     let filePath = TARGET_FOLDER + path;
 
-    console.log(filePath);
-
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "File not found", ok: false });
     }
