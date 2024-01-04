@@ -23,7 +23,6 @@ export const WarehouseController = {
         mobilenumber,
         city,
         address,
-        // products
       };
 
       const existing = await Warehouse.findOneAndUpdate(
@@ -33,15 +32,15 @@ export const WarehouseController = {
       );
 
       const warehouse = existing;
-      // const warehouseProducts = products.map((product) => ({
-      //   ...product,
-      //   warehouse: warehouse._id,
-      // }));
+      const warehouseProducts = products.map((product) => ({
+        ...product,
+        warehouse: warehouse._id,
+      }));
 
-      // const createdProducts = await Products.insertMany(warehouseProducts);
-      // const productIds = createdProducts.map((product) => product._id);
+      const createdProducts = await Products.insertMany(warehouseProducts);
+      const productIds = createdProducts.map((product) => product._id);
 
-      // warehouse.products = productIds;
+      warehouse.products = productIds;
       await warehouse.save();
 
       return res.status(201).json({
@@ -54,14 +53,12 @@ export const WarehouseController = {
           mobilenumber: warehouse.mobilenumber,
           city: warehouse.city,
           address: warehouse.address,
-          // products: warehouse.products,
         },
       });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
   },
-
   getWarehouses: async (req, res) => {
     try {
       const warehouses = await Warehouse.find({}).populate("products");
