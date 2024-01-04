@@ -61,8 +61,37 @@ export const WarehouseController = {
   },
 
   getWarehouses: async (req, res) => {
+    let { page, limit, search, startdate, enddate } = req.query;
+
     try {
-      const warehouses = await Warehouse.find({});
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+
+      const query = {};
+
+      if (search) {
+        query.name = {
+          $regex: search,
+          $options: "i",
+        };
+      }
+      if (startdate) {
+        query.createdAt = {
+          $gte: startdate,
+        };
+      }
+      if (enddate) {
+        query.createdAt = {
+          $lte: enddate,
+        };
+      }
+
+      const warehouses = await Warehouse.find(query)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("products")
+        .sort({ createdAt: -1 })
+        .exec();
 
       return res.status(200).json({ data: warehouses, ok: true });
     } catch (e) {
