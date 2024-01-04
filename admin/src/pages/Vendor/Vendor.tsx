@@ -7,6 +7,9 @@ import {
   Collapse,
   Grid,
   Group,
+  Paper,
+  Text,
+  Space,
   Stack,
   TextInput,
   Title,
@@ -17,7 +20,10 @@ import { axios } from "../../config/Axios";
 import _axios from "axios";
 import { AxiosError } from "axios";
 import { WarehouseTable } from "../../components/Warehouse/Datatable-Warehouse";
+import { useNavigate } from "react-router-dom";
+
 export function Vendor() {
+
   const {
     data,
     isLoading,
@@ -135,6 +141,8 @@ export function Vendor() {
     vendorAddMutation.mutate(form.values);
   };
 
+  const navigate = useNavigate()
+
   return (
     <div>
       <div className="w-full overflow-hidden">
@@ -169,7 +177,7 @@ export function Vendor() {
                             fw={700}
                             ta="start"
                           >
-                            Add Ware House
+                            Add  Vendor
                           </Title>
                         </div>
 
@@ -400,12 +408,89 @@ export function Vendor() {
                 </div>
               </Collapse>
             ) : (
-              <WarehouseTable
-                data={data}
-                categoryDeleteMutation={categoryDeleteMutation}
-                isLoading={isLoading}
-                setShowForm={setShowForm}
-              />
+              // <WarehouseTable
+              //   data={data}
+              //   categoryDeleteMutation={categoryDeleteMutation}
+              //   isLoading={isLoading}
+              //   setShowForm={setShowForm}
+              // />
+              <Paper className="p-8 shadow-sm border-2 min-h-[80vh] border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[87%] items-start">
+                <div className="flex flex-col w-full">
+                  <div className="flex justify-between m-2">
+                    <h2 className="capitalize font-medium text-xl">
+                      Vendor List
+                    </h2>
+                    <div className="flex gap-5 items-center">
+                      <Button
+                        className="bg-admin-dominant"
+                        rightSection={<Icon icon="material-symbols:add" />}
+                        onClick={() => setShowForm(true)}
+                      >
+                        Create New
+                      </Button>
+
+                      <Button className="bg-red-600">Report</Button>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="grid grid-cols-4 gap-6 p-3">
+                      <div onClick={() => navigate("/singlevendor/1")} className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
+                        <Text className="font-semibold">Business name</Text>
+                        <Space h="xs" />
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          Vendor Name
+                        </Text>
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          GST no :341325348
+                        </Text>
+                      </div>
+                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
+                        <Text className="font-semibold">Business name</Text>
+                        <Space h="xs" />
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          Vendor Name
+                        </Text>
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          GST no :341325348
+                        </Text>
+                      </div>
+
+                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
+                        <Text className="font-semibold">Business name</Text>
+                        <Space h="xs" />
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          Vendor Name
+                        </Text>
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          GST no :341325348
+                        </Text>
+                      </div>
+
+                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
+                        <Text className="font-semibold">Business name</Text>
+                        <Space h="xs" />
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          Vendor Name
+                        </Text>
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          GST no :341325348
+                        </Text>
+                      </div>
+
+                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
+                        <Text className="font-semibold">Business name</Text>
+                        <Space h="xs" />
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          Vendor Name
+                        </Text>
+                        <Text className="text-[rgba(28,28,28,0.4)]">
+                          GST no :341325348
+                        </Text>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Paper>
             )}
           </div>
         )}

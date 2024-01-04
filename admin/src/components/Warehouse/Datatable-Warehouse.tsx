@@ -17,7 +17,7 @@ export function WarehouseTable({
     if (isLoading) return [];
     return data?.data.map((_data: any) => (
       <Table.Tr key={_data.name}>
-        <Table.Td className="flex gap-2 items-center">{_data.name}</Table.Td>
+        <Table.Td className="flex gap-2 items-center"><a href={`/singlewarehouse/${_data._id}`} style={{textDecoration:"underline",color:"blue"}}>{_data.name}</a></Table.Td>
         <Table.Td>{_data.managername}</Table.Td>
         <Table.Td>{_data.mobilenumber}</Table.Td>
         <Table.Td>{_data.city}</Table.Td>
@@ -40,6 +40,7 @@ export function WarehouseTable({
       </Table.Tr>
     ));
   };
+
 
   return (
     <div className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[97%] items-start">

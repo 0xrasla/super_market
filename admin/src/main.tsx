@@ -25,6 +25,8 @@ import {
 } from "./pages/index.ts";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Singlewarehouse from "./components/Warehouse/Singlewarehouse.tsx";
+import Singlevendor from "./components/Vendor/Singlevendor.tsx";
 
 const theme = createTheme({});
 
@@ -108,6 +110,24 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             element={
               <DashboardLayout>
                 <Settings />
+              </DashboardLayout>
+            }
+          />
+
+          <Route
+            path="/singlewarehouse/:id"
+            element={
+              <DashboardLayout>
+                <Singlewarehouse />
+              </DashboardLayout>
+            }
+          />
+
+          <Route
+            path="/singlevendor/:id"
+            element={
+              <DashboardLayout>
+                <Singlevendor />
               </DashboardLayout>
             }
           />

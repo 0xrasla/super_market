@@ -13,7 +13,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { Icon } from "@iconify/react";
+  import { Icon } from "@iconify/react";
 import { useForm } from "@mantine/form";
 import { axios } from "../../config/Axios";
 import _axios from "axios";
