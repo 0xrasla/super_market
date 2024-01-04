@@ -2,7 +2,7 @@ import Product from "../models/Product.js";
 
 export const ProductController = {
   createProduct: async (req, res) => {
-    const { lotNumber, rackNumber,productName,category,vendor,name, price, discount, expirydate,quantity } =
+    const { lotNumber, rackNumber,productName,category,vendor,name,gstnumber, price, discount, expirydate,quantity } =
       req.body;
 
     try {
@@ -16,7 +16,8 @@ export const ProductController = {
         price,
         discount,
         expirydate,
-        quantity
+        quantity,
+        gstnumber,
       };
 
       let existing = await Product.findOne({ gstnumber });
@@ -32,16 +33,16 @@ export const ProductController = {
         ok: true,
         data: {
             gstnumber: product.gstnumber,
-            businessname: product.businessname,
-            vendorname: product.vendorname,
-          mobilenumber: product.mobilenumber,
-          city: product.city,
-          address: product.address,
-          email: product.email,
-          location: product.location,
-          accountnumber: product.accountnumber,
-          ifsc: product.ifsc,
-          aadharupload: product.aadharupload
+            lotNumber: product.lotNumber,
+            productName: product.productName,
+            category: product.category,
+            vendor: product.vendor,
+            rackNumber: product.rackNumber,
+            name: product.name,
+            price: product.price,
+            discount: product.discount,
+            expirydate: product.expirydate,
+            quantity: product.quantity,
         },
       });
     } catch (e) {
@@ -51,7 +52,7 @@ export const ProductController = {
 
   getProducts: async (req, res) => {
     try {
-      const products = await Vendor.find();
+      const products = await Product.find();
 
       return res.status(200).json({ data: products, ok: true });
     } catch (e) {

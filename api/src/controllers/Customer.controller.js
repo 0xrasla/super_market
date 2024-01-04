@@ -2,13 +2,13 @@ import Customer from "../models/Customer.js";
 
 export const CustomerController = {
   createCustomer: async (req, res) => {
-    const { customername, customertype,email, mobilenumber, city, address } =
+    const { name, type,email, mobilenumber, city, address } =
       req.body;
 
     try {
       const newCustomer = {
-        customername,
-        customertype,
+        name,
+        type,
         email,
         mobilenumber,
         city,
@@ -27,8 +27,8 @@ export const CustomerController = {
         message: "Customer created successfully",
         ok: true,
         data: {
-            customertype: customer.customertype,
-            customername: customer.customername,
+            type: customer.type,
+            name: customer.name,
             email: customer.email,
           mobilenumber: customer.mobilenumber,
           city: customer.city,
@@ -77,14 +77,14 @@ export const CustomerController = {
   updateCustomer: async (req, res) => {
     try {
       const { id } = req.query;
-      const { customername, customertype,email, mobilenumber, city, address } =
+      const { name, type,email, mobilenumber, city, address } =
         req.body;
 
       const customer = await Customer.findByIdAndUpdate(
         id,
         {
-            customername,
-            customertype,
+            name,
+            type,
           mobilenumber,
           city,
           email,

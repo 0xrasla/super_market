@@ -43,6 +43,10 @@ const ProductSchema = new Schema({
     type: String,
     required: true,
   },
+  gstnumber: {
+    type: String,
+    required: true,
+  },
 });
 
 export default model("Product", ProductSchema);

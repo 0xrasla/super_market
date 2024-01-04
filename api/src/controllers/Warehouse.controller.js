@@ -23,6 +23,7 @@ export const WarehouseController = {
         mobilenumber,
         city,
         address,
+        // products
       };
 
       const existing = await Warehouse.findOneAndUpdate(
@@ -32,15 +33,15 @@ export const WarehouseController = {
       );
 
       const warehouse = existing;
-      const warehouseProducts = products.map((product) => ({
-        ...product,
-        warehouse: warehouse._id,
-      }));
+      // const warehouseProducts = products.map((product) => ({
+      //   ...product,
+      //   warehouse: warehouse._id,
+      // }));
 
-      const createdProducts = await Products.insertMany(warehouseProducts);
-      const productIds = createdProducts.map((product) => product._id);
+      // const createdProducts = await Products.insertMany(warehouseProducts);
+      // const productIds = createdProducts.map((product) => product._id);
 
-      warehouse.products = productIds;
+      // warehouse.products = productIds;
       await warehouse.save();
 
       return res.status(201).json({
@@ -53,6 +54,7 @@ export const WarehouseController = {
           mobilenumber: warehouse.mobilenumber,
           city: warehouse.city,
           address: warehouse.address,
+          // products: warehouse.products,
         },
       });
     } catch (e) {
@@ -62,7 +64,7 @@ export const WarehouseController = {
 
   getWarehouses: async (req, res) => {
     try {
-      const warehouses = await Warehouse.find({});
+      const warehouses = await Warehouse.find({}).populate("products");
 
       return res.status(200).json({ data: warehouses, ok: true });
     } catch (e) {
@@ -119,6 +121,56 @@ export const WarehouseController = {
     }
   },
 
+  // generateReports: async (req, res) => {
+  //   try {
+  //     // Fetch the warehouse data (you might need to modify this based on your actual models)
+  //     const warehouses = await Warehouse.find().populate('products');
+      
+  //     // Create a new PDF document
+  //     const doc = new PDFDocument();
+    
+  //     // Pipe the PDF to the response
+  //     res.setHeader('Content-Type', 'application/pdf');
+  //     res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
+  //     doc.pipe(res);
+  
+  //     // Add content to the PDF based on the fetched warehouse data
+  //     warehouses.forEach((warehouse, index) => {
+  //       doc.fontSize(16).text(`Warehouse: ${warehouse.name}`);
+  //       doc.fontSize(12).text(`Location: ${warehouse.location}`);
+  //       doc.fontSize(12).text(`Manager Name: ${warehouse.managername}`);
+  //       // Add other relevant information...
+  
+  //       // Add product information
+  //       doc.moveDown();
+  //       doc.fontSize(14).text('Products:');
+  
+  //       const table = {
+  //         headers: ['Product Name', 'Quantity'], // Add other headers as needed
+  //         rows: warehouse.products.map(product => [product.name, product.quantity]) // Adjust based on your actual product properties
+  //       };
+  
+  //       doc.table(table, {
+  //         prepareHeader: () => doc.font('Helvetica-Bold'),
+  //         prepareRow: (row, i) => doc.font('Helvetica').fontSize(12),
+  //         didDrawCell: (data) => {
+  //           // You can customize cell styling here
+  //         }
+  //       });
+  
+  //       // Move to the next page if there are more warehouses
+  //       if (index !== warehouses.length - 1) {
+  //         doc.addPage();
+  //       }
+  //     });
+  
+  //     // End the PDF document
+  //     doc.end();
+  //   } catch (e) {
+  //     return res.status(500).json({ message: e.message, ok: false });
+  //   }
+  // },
+  
   generateReports: async (req, res) => {
     try {
       // Fetch the warehouse data (you might need to modify this based on your actual models)
@@ -137,6 +189,9 @@ export const WarehouseController = {
         doc.fontSize(16).text(`Warehouse: ${warehouse.name}`);
         doc.fontSize(12).text(`Location: ${warehouse.location}`);
         doc.fontSize(12).text(`Manager Name: ${warehouse.managername}`);
+        doc.fontSize(12).text(`Mobile Number: ${warehouse.mobilenumber}`);
+        doc.fontSize(12).text(`City: ${warehouse.city}`);
+        doc.fontSize(12).text(`Address: ${warehouse.address}`);
         // Add other relevant information...
   
         // Add product information

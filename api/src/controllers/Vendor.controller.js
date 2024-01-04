@@ -1,4 +1,4 @@
-import Product from "../models/Vendor.js";
+import Vendor from "../models/Vendor.js";
 
 export const VendorController = {
   createVendor: async (req, res) => {
@@ -29,7 +29,7 @@ export const VendorController = {
         
       };
 
-      let existing = await Product.findOne({ gstnumber });
+      let existing = await Vendor.findOne({ gstnumber });
 
       if (existing) {
         return res.status(409).json({ message: "Vendor already exists" });
