@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import {
   Button,
@@ -13,11 +12,11 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-  import { Icon } from "@iconify/react";
+import { Icon } from "@iconify/react";
 import { useForm } from "@mantine/form";
 import { axios } from "../../config/Axios";
 import _axios from "axios";
-import { AxiosError } from "axios";
+import { handleToast } from "../../config/Constants";
 import { WarehouseTable } from "../../components/Warehouse/Datatable-Warehouse";
 
 export function Warehouse() {
@@ -67,11 +66,58 @@ export function Warehouse() {
     },
   });
 
-  const categoryDeleteMutation = useMutation({
-    mutationFn: (id: any) => {
-      return axios(`/warehouse?id=${id}`, {
-        method: "DELETE",
+  //is edit enabled
+
+  const [isEdit, setIsEdit] = useState(false);
+
+  const warehouseEditMutaion = useMutation({
+    mutationFn: async (_data: any) => {
+      console;
+      console.log("data", _data);
+      console.log(_data);
+      const response = await axios(`/warehouse?id=${_data._id}`);
+      const warehouseData = response.data.data;
+      const products = warehouseData.products;
+      console.log(products);
+      setShowForm(true);
+      if (warehouseData) {
+        form.setValues({
+          name: warehouseData.name,
+          address: warehouseData.address,
+          city: warehouseData.city,
+          location: warehouseData.location,
+          managername: warehouseData.managername,
+          mobilenumber: warehouseData.mobilenumber,
+          products: warehouseData.products,
+        });
+      }
+
+      console.log(warehouseData._id);
+      return await axios.patch(`/warehouse?id=${warehouseData._id}`, _data, {});
+    },
+    onSuccess: () => {
+      handleToast({
+        title: "Success",
+        color: "green",
+        message: "Warehouse updated successfully",
       });
+      // refetchWarehouse();
+      // form.reset();
+    },
+    onError: (e: any) => {
+      console.log("Error", e);
+      const data: any = e.response?.data;
+      handleToast({
+        title: "Error",
+        color: "red",
+        message: data?.message || "Something went wrong",
+      });
+    },
+  });
+
+  const warehouseDeleteMutation = useMutation({
+    mutationFn: (id: any) => {
+      return axios.delete(`/warehouse?id=${id}`);
     },
     onSuccess: () => {
       handleToast({
@@ -81,7 +127,7 @@ export function Warehouse() {
       });
       refetchWarehouse();
     },
-    onError: (e: AxiosError) => {
+    onError: (e: any) => {
       const data: any = e.response?.data;
       handleToast({
         title: "Error",
@@ -92,22 +138,6 @@ export function Warehouse() {
   });
 
   const [showForm, setShowForm] = useState(false);
-
-  const handleToast = ({
-    title,
-    message,
-    color = "green",
-  }: {
-    title: string;
-    message: string;
-    color?: "red" | "green";
-  }) => {
-    return notifications.show({
-      title: title,
-      message: message,
-      color: color,
-    });
-  };
 
   const productForm = {
     lotNumber: 0,
@@ -186,7 +216,7 @@ export function Warehouse() {
   };
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className='w-full overflow-hidden'>
       {isLoading ? (
         "Loading..."
       ) : (
@@ -195,37 +225,37 @@ export function Warehouse() {
             <Collapse
               in={showForm}
               transitionDuration={200}
-              transitionTimingFunction="linear"
+              transitionTimingFunction='linear'
             >
-              <div className="w-full flex">
-                <div className="p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start">
+              <div className='w-full flex'>
+                <div className='p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start'>
                   <form
                     onSubmit={form.onSubmit(() => handleAdd())}
-                    encType="multipart/form-data"
+                    encType='multipart/form-data'
                   >
-                    <div className="flex justify-between">
-                      <div className="flex gap-1 items-center">
+                    <div className='flex justify-between'>
+                      <div className='flex gap-1 items-center'>
                         <Icon
-                          className="cursor-pointer"
-                          icon="ic:outline-arrow-back"
+                          className='cursor-pointer'
+                          icon='ic:outline-arrow-back'
                           fontSize={24}
                           onClick={() => setShowForm(false)}
                         />
                         <Title
                           order={2}
-                          size="h3"
-                          className="font-poppins"
+                          size='h3'
+                          className='font-poppins'
                           fw={700}
-                          ta="start"
+                          ta='start'
                         >
                           Add Ware House
                         </Title>
                       </div>
 
-                      <div className="m-2">
+                      <div className='m-2'>
                         <Button
-                          className="bg-admin-dominant"
-                          rightSection={<Icon icon="material-symbols:add" />}
+                          className='bg-admin-dominant'
+                          rightSection={<Icon icon='material-symbols:add' />}
                           onClick={() => {
                             form.insertListItem("products", {
                               ...productForm,
@@ -240,78 +270,78 @@ export function Warehouse() {
                     <Grid>
                       <Grid.Col span={6}>
                         <TextInput
-                          label="Name"
-                          placeholder="Warehouse Name"
-                          mt="md"
-                          name="name"
-                          variant="default"
+                          label='Name'
+                          placeholder='Warehouse Name'
+                          mt='md'
+                          name='name'
+                          variant='default'
                           {...form.getInputProps("name")}
                         />
                       </Grid.Col>
 
                       <Grid.Col span={6}>
                         <TextInput
-                          label="Manager Name"
-                          placeholder="Manager Name"
-                          mt="md"
-                          name="managername"
-                          variant="default"
+                          label='Manager Name'
+                          placeholder='Manager Name'
+                          mt='md'
+                          name='managername'
+                          variant='default'
                           {...form.getInputProps("managername")}
                         />
                       </Grid.Col>
 
                       <Grid.Col span={6}>
                         <TextInput
-                          label="Location"
-                          placeholder="Lat/Long"
-                          mt="md"
-                          name="location"
-                          variant="default"
+                          label='Location'
+                          placeholder='Lat/Long'
+                          mt='md'
+                          name='location'
+                          variant='default'
                           {...form.getInputProps("location")}
                         />
                       </Grid.Col>
 
                       <Grid.Col span={6}>
                         <NumberInput
-                          label="Mobile Number"
-                          placeholder="+91 XXXXXXXXXX"
-                          mt="md"
-                          name="mobilenumber"
-                          variant="default"
+                          label='Mobile Number'
+                          placeholder='+91 XXXXXXXXXX'
+                          mt='md'
+                          name='mobilenumber'
+                          variant='default'
                           {...form.getInputProps("mobilenumber")}
                         />
                       </Grid.Col>
 
                       <Grid.Col span={6}>
                         <TextInput
-                          label="City"
-                          placeholder="Nagercoil"
-                          mt="md"
-                          name="city"
-                          variant="default"
+                          label='City'
+                          placeholder='Nagercoil'
+                          mt='md'
+                          name='city'
+                          variant='default'
                           {...form.getInputProps("city")}
                         />
                       </Grid.Col>
 
                       <Grid.Col span={6}>
                         <TextInput
-                          label="Address"
-                          placeholder="Address"
-                          mt="md"
-                          name="address"
-                          variant="default"
+                          label='Address'
+                          placeholder='Address'
+                          mt='md'
+                          name='address'
+                          variant='default'
                           {...form.getInputProps("address")}
                         />
                       </Grid.Col>
                     </Grid>
 
-                    <Group justify="start" mt="xl">
+                    <Group justify='start' mt='xl'>
                       <Button
-                        type="submit"
-                        size="md"
-                        variant="filled"
-                        className="bg-admin-dominant text-white w-full"
-                        leftSection={<Icon icon="material-symbols:add" />}
+                        type='submit'
+                        size='md'
+                        variant='filled'
+                        className='bg-admin-dominant text-white w-full'
+                        leftSection={<Icon icon='material-symbols:add' />}
                         loading={warehouseAddMutation.isPending}
                         disabled={warehouseAddMutation.isPending}
                       >
@@ -323,25 +353,25 @@ export function Warehouse() {
                   </form>
                 </div>
 
-                <Stack className="w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll">
+                <Stack className='w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll'>
                   {form.values.products.map((_productform: any, index: any) => (
                     <div
                       key={index}
-                      className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start"
+                      className='p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start'
                     >
-                      <form encType="multipart/form-data">
-                        <div className="flex justify-between">
+                      <form encType='multipart/form-data'>
+                        <div className='flex justify-between'>
                           <Title
                             order={2}
-                            size="h3"
-                            className="font-poppins"
+                            size='h3'
+                            className='font-poppins'
                             fw={700}
-                            ta="start"
+                            ta='start'
                           >
                             Add Product ({index + 1})
                           </Title>
 
-                          <div className="m-2 flex gap-2 items-center">
+                          <div className='m-2 flex gap-2 items-center'>
                             <CloseButton
                               onClick={() => {
                                 form.removeListItem("products", index);
@@ -353,11 +383,11 @@ export function Warehouse() {
                         <Grid>
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="Lot Number"
-                              placeholder="Lot Number"
-                              mt="md"
-                              name="lotNumber"
-                              variant="default"
+                              label='Lot Number'
+                              placeholder='Lot Number'
+                              mt='md'
+                              name='lotNumber'
+                              variant='default'
                               {...form.getInputProps(
                                 `products.${index}.lotNumber`
                               )}
@@ -366,11 +396,11 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="Rack Number"
-                              placeholder="Rack Number"
-                              mt="md"
-                              name="rackNumber"
-                              variant="default"
+                              label='Rack Number'
+                              placeholder='Rack Number'
+                              mt='md'
+                              name='rackNumber'
+                              variant='default'
                               {...form.getInputProps(
                                 `products.${index}.rackNumber`
                               )}
@@ -379,11 +409,11 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <TextInput
-                              label="Product Name"
-                              placeholder="Product Name"
-                              mt="md"
-                              name="productName"
-                              variant="default"
+                              label='Product Name'
+                              placeholder='Product Name'
+                              mt='md'
+                              name='productName'
+                              variant='default'
                               {...form.getInputProps(
                                 `products.${index}.productName`
                               )}
@@ -392,12 +422,12 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <NativeSelect
-                              label="Category"
+                              label='Category'
                               disabled={categoryLoading}
-                              placeholder="Category"
-                              mt="md"
-                              name="category"
-                              variant="default"
+                              placeholder='Category'
+                              mt='md'
+                              name='category'
+                              variant='default'
                               data={
                                 categoryLoading
                                   ? []
@@ -420,11 +450,11 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="Quantity"
-                              placeholder="Quantity"
-                              mt="md"
-                              name="quantity"
-                              variant="default"
+                              label='Quantity'
+                              placeholder='Quantity'
+                              mt='md'
+                              name='quantity'
+                              variant='default'
                               {...form.getInputProps(
                                 `products.${index}.quantity`
                               )}
@@ -433,22 +463,22 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="Price"
-                              placeholder="Price"
-                              mt="md"
-                              name="price"
-                              variant="default"
+                              label='Price'
+                              placeholder='Price'
+                              mt='md'
+                              name='price'
+                              variant='default'
                               {...form.getInputProps(`products.${index}.price`)}
                             />
                           </Grid.Col>
 
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="Discount"
-                              placeholder="Discount"
-                              mt="md"
-                              name="discount"
-                              variant="default"
+                              label='Discount'
+                              placeholder='Discount'
+                              mt='md'
+                              name='discount'
+                              variant='default'
                               {...form.getInputProps(
                                 `products.${index}.discount`
                               )}
@@ -457,11 +487,11 @@ export function Warehouse() {
 
                           <Grid.Col span={6}>
                             <NumberInput
-                              label="GST"
-                              placeholder="GST"
-                              mt="md"
-                              name="gst"
-                              variant="default"
+                              label='GST'
+                              placeholder='GST'
+                              mt='md'
+                              name='gst'
+                              variant='default'
                               {...form.getInputProps(`products.${index}.gst`)}
                             />
                           </Grid.Col>
@@ -475,9 +505,11 @@ export function Warehouse() {
           ) : (
             <WarehouseTable
               data={data}
-              categoryDeleteMutation={categoryDeleteMutation}
+              warehouseDeleteMutation={warehouseDeleteMutation}
+              warehouseEditMutaion={warehouseEditMutaion}
               isLoading={isLoading}
               setShowForm={setShowForm}
+              setIsEdit={setIsEdit}
             />
           )}
         </div>

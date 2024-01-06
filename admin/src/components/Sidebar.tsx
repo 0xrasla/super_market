@@ -23,8 +23,8 @@ export function Sidebar() {
       link: "/dashboard",
       icon: (
         <Icon
-          icon="fluent:data-pie-24-filled"
-          className="w-5 h-5 transition duration-75"
+          icon='fluent:data-pie-24-filled'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -34,9 +34,9 @@ export function Sidebar() {
       isExpanded: true,
       icon: (
         <Icon
-          icon="uis:align-left"
+          icon='uis:align-left'
           rotate={3}
-          className="w-5 h-5 transition duration-75"
+          className='w-5 h-5 transition duration-75'
         />
       ),
       subLinks: [
@@ -45,8 +45,8 @@ export function Sidebar() {
           link: "/warehouse?view=all",
           icon: (
             <Icon
-              icon="mynaui:store"
-              className="w-5 h-5 transition duration-75"
+              icon='mynaui:store'
+              className='w-5 h-5 transition duration-75'
             />
           ),
         },
@@ -55,8 +55,8 @@ export function Sidebar() {
           link: "/category",
           icon: (
             <Icon
-              icon="iconamoon:category"
-              className="w-5 h-5 transition duration-75"
+              icon='iconamoon:category'
+              className='w-5 h-5 transition duration-75'
             />
           ),
         },
@@ -65,8 +65,8 @@ export function Sidebar() {
           link: "/vendor",
           icon: (
             <Icon
-              icon="ion:cube-outline"
-              className="w-5 h-5 transition duration-75"
+              icon='ion:cube-outline'
+              className='w-5 h-5 transition duration-75'
             />
           ),
         },
@@ -77,8 +77,8 @@ export function Sidebar() {
       link: "/products",
       icon: (
         <Icon
-          icon="ion:bag-handle"
-          className="w-5 h-5 transition duration-75"
+          icon='ion:bag-handle'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -87,8 +87,8 @@ export function Sidebar() {
       label: "Employees",
       icon: (
         <Icon
-          icon="mdi:graph-line"
-          className="w-5 h-5 transition duration-75"
+          icon='mdi:graph-line'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -97,8 +97,8 @@ export function Sidebar() {
       label: "Customer",
       icon: (
         <Icon
-          icon="ri:message-2-line"
-          className="w-5 h-5 transition duration-75"
+          icon='ri:message-2-line'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -107,8 +107,8 @@ export function Sidebar() {
       label: "Shops",
       icon: (
         <Icon
-          icon="solar:shop-2-broken"
-          className="w-5 h-5 transition duration-75"
+          icon='solar:shop-2-broken'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -117,8 +117,8 @@ export function Sidebar() {
       label: "Settings",
       icon: (
         <Icon
-          icon="material-symbols:settings-outline"
-          className="w-5 h-5 transition duration-75"
+          icon='material-symbols:settings-outline'
+          className='w-5 h-5 transition duration-75'
         />
       ),
     },
@@ -128,16 +128,16 @@ export function Sidebar() {
     "bg-admin-dominant rounded-lg text-white transition-all duration-[0.4s]";
 
   return (
-    <div className="h-screen min-w-[300px] overflow-none text-admin-textdominant text-lg bg-gray-200 font-poppins">
-      <div className="flex justify-center items-center gap-2 p-4">
-        <img src="/icons/adminlogo.svg" alt="" className="w-12" />
-        <h2 className="text-2xl text-black capitalize m-4 font-bold">
+    <div className='h-screen min-w-[300px] overflow-none text-admin-textdominant text-lg bg-gray-200 font-poppins'>
+      <div className='flex justify-center items-center gap-2 p-4'>
+        <img src='/icons/adminlogo.svg' alt='' className='w-12' />
+        <h2 className='text-2xl text-black capitalize m-4 font-bold'>
           Supermarket
         </h2>
       </div>
-      <ul className="space-y-2 m-0 px-4">
+      <ul className='space-y-2 m-0 px-4'>
         {Links.map((link, index) => (
-          <li key={index} className="cursor-pointer list-none">
+          <li key={index} className='cursor-pointer list-none'>
             <p
               className={`flex justify-between items-center ${
                 link.label.toLowerCase() === activelink ? activelabelclass : ""
@@ -158,8 +158,8 @@ export function Sidebar() {
 
               {link.subLinks ? (
                 <Icon
-                  icon="material-symbols:keyboard-arrow-up"
-                  className="w-5 h-5 transition duration-75"
+                  icon='material-symbols:keyboard-arrow-up'
+                  className='w-5 h-5 transition duration-75'
                   rotate={link.isExpanded ? 0 : 2}
                 />
               ) : null}
@@ -168,12 +168,12 @@ export function Sidebar() {
             <Collapse
               in={link.isExpanded || false}
               transitionDuration={200}
-              transitionTimingFunction="linear"
+              transitionTimingFunction='linear'
             >
               {link && link.subLinks && (
-                <ul className="space-y-4 ml-6 mt-4">
+                <ul className='space-y-4 ml-6 mt-4'>
                   {link.subLinks.map((subLink) => (
-                    <li className="list-none" key={subLink.label}>
+                    <li className='list-none' key={subLink.label}>
                       <span
                         className={`flex gap-2 p-2 items-center ${
                           subLink.label.toLowerCase() === activelink

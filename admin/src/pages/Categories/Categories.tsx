@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import {
   Button,
@@ -16,7 +15,7 @@ import { axios } from "../../config/Axios";
 import _axios from "axios";
 import { AxiosError } from "axios";
 import { FileInput } from "@mantine/core";
-import { API_URL } from "../../config/Constants";
+import { API_URL, handleToast } from "../../config/Constants";
 
 export function Categories() {
   const {
@@ -47,6 +46,7 @@ export function Categories() {
         },
       });
     },
+
     onSuccess: () => {
       handleToast({
         title: "Success",
@@ -96,22 +96,6 @@ export function Categories() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  const handleToast = ({
-    title,
-    message,
-    color = "green",
-  }: {
-    title: string;
-    message: string;
-    color?: "red" | "green";
-  }) => {
-    return notifications.show({
-      title: title,
-      message: message,
-      color: color,
-    });
-  };
-
   const form = useForm({
     initialValues: {
       name: "",
@@ -134,7 +118,7 @@ export function Categories() {
       >
         <Table.Td>
           <Checkbox
-            aria-label="Select row"
+            aria-label='Select row'
             checked={selectedRows.includes(_data._id)}
             onChange={(event) =>
               setSelectedRows(
@@ -145,21 +129,20 @@ export function Categories() {
             }
           />
         </Table.Td>
-        <Table.Td className="flex gap-2 items-center">
+        <Table.Td className='flex gap-2 items-center'>
           <img
             src={API_URL + "/files/view?path=" + _data.image}
-            alt=""
-            className="cursor-pointer w-10 h-10 rounded-md"
-            crossOrigin="anonymous"
+            alt=''
+            className='cursor-pointer w-10 h-10 rounded-md'
+            crossOrigin='anonymous'
           />
           {_data.name}
         </Table.Td>
         <Table.Td>
-          {" "}
           <img
-            src="/icons/deleteicon.svg"
-            alt=""
-            className="cursor-pointer"
+            src='/icons/deleteicon.svg'
+            alt=''
+            className='cursor-pointer'
             onClick={() => categoryDeleteMutation.mutate(_data._id)}
           />
         </Table.Td>
@@ -177,9 +160,9 @@ export function Categories() {
       {isLoading ? (
         "Loading..."
       ) : (
-        <div className="flex items-start">
-          <div className="shadow-lg p-4 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 w-[35%] flex gap-4 items-start">
-            <Table className="">
+        <div className='flex items-start'>
+          <div className='shadow-lg p-4 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 w-[35%] flex gap-4 items-start'>
+            <Table className=''>
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th />
@@ -191,9 +174,9 @@ export function Categories() {
             </Table>
           </div>
           <img
-            src="/icons/addicon.svg"
-            alt=""
-            className="cursor-pointer"
+            src='/icons/addicon.svg'
+            alt=''
+            className='cursor-pointer'
             onClick={() => setShowForm(!showForm)}
           />
 
@@ -201,54 +184,54 @@ export function Categories() {
             <Collapse
               in={showForm}
               transitionDuration={200}
-              transitionTimingFunction="linear"
-              className="p-6 shadow-xl"
+              transitionTimingFunction='linear'
+              className='p-6 shadow-xl'
             >
-              <div className="p-4 rounded-md ml-4 mt-4 flex gap-4 items-start">
+              <div className='p-4 rounded-md ml-4 mt-4 flex gap-4 items-start'>
                 <form
                   onSubmit={form.onSubmit(() => handleAdd())}
-                  encType="multipart/form-data"
+                  encType='multipart/form-data'
                 >
                   <Title
                     order={2}
-                    size="h1"
+                    size='h1'
                     style={{
                       fontFamily: "Greycliff CF, var(--mantine-font-family)",
                     }}
                     fw={900}
-                    ta="center"
+                    ta='center'
                   >
                     Add Category
                   </Title>
 
                   <TextInput
-                    label="Category Name"
-                    placeholder="Category Name"
-                    mt="md"
-                    name="name"
-                    variant="default"
+                    label='Category Name'
+                    placeholder='Category Name'
+                    mt='md'
+                    name='name'
+                    variant='default'
                     {...form.getInputProps("name")}
                   />
 
                   <FileInput
-                    rightSection={<Icon icon="material-symbols:add" />}
-                    label="Upload Image"
-                    placeholder="Upload image"
-                    rightSectionPointerEvents="none"
-                    mt="md"
-                    accept="image/*"
+                    rightSection={<Icon icon='material-symbols:add' />}
+                    label='Upload Image'
+                    placeholder='Upload image'
+                    rightSectionPointerEvents='none'
+                    mt='md'
+                    accept='image/*'
                     onChange={(e) => {
                       form.setFieldValue("image", e);
                     }}
                   />
 
-                  <Group justify="start" mt="xl">
+                  <Group justify='start' mt='xl'>
                     <Button
-                      type="submit"
-                      size="md"
-                      variant="filled"
-                      className="bg-admin-dominant text-white"
-                      leftSection={<Icon icon="material-symbols:add" />}
+                      type='submit'
+                      size='md'
+                      variant='filled'
+                      className='bg-admin-dominant text-white'
+                      leftSection={<Icon icon='material-symbols:add' />}
                       loading={categoryAddMutation.isPending}
                       disabled={categoryAddMutation.isPending}
                     >
@@ -256,11 +239,11 @@ export function Categories() {
                     </Button>
 
                     <Button
-                      type="button"
-                      size="md"
-                      variant="filled"
-                      className="bg-red-500 outline-none text-white"
-                      leftSection={<Icon icon="material-symbols:close" />}
+                      type='button'
+                      size='md'
+                      variant='filled'
+                      className='bg-red-500 outline-none text-white'
+                      leftSection={<Icon icon='material-symbols:close' />}
                       onClick={() => setShowForm(!showForm)}
                     >
                       Close
