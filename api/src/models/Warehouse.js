@@ -13,6 +13,7 @@ const WarehouseSchema = new Schema({
       ref: "Product",
     },
   ],
+  createdAt: { type: Date, default: Date.now },
 });
 
 export default model("Warehouse", WarehouseSchema);
