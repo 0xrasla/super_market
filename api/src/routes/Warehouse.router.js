@@ -17,6 +17,5 @@ export const WarehouseRouter = Router()
   .get("/all", WarehouseController.getWarehouses)
   .patch("/", body("name").isString(), WarehouseController.updateWarehouse)
   .delete("/", query("id").isMongoId(), WarehouseController.deleteWarehouse)
-  .post("/generatereports", WarehouseController.generateReports)
-  .get("/getreports",query("id"), WarehouseController.getReports);
+  .get("/generatepdf", WarehouseController.generatePdf)
 

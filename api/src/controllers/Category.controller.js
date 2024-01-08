@@ -31,10 +31,41 @@ export const CategoryController = {
   },
 
   getCategories: async (req, res) => {
-    try {
-      const categories = await Category.find();
+    let { page, limit, search, startdate, enddate } = req.query;
 
-      return res.status(200).json({ data: categories, ok: true });
+    try {
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+
+      const query = {};
+
+      if (search) {
+        query.name = {
+          $regex: search,
+          $options: "i",
+        };
+      }
+      if (startdate) {
+        query.createdAt = {
+          $gte: startdate,
+        };
+      }
+      if (enddate) {
+        query.createdAt = {
+          $lte: enddate,
+        };
+      }
+
+      const categories = await Category.find(query)
+      .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("products")
+        .sort({ createdAt: -1 })
+        .exec();
+
+        const count = await Category.countDocuments(query);
+
+      return res.status(200).json({ data: categories, ok: true ,message: "Categories fetched successfully",count});
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -46,7 +77,7 @@ export const CategoryController = {
 
       const category = await Category.findById(id);
 
-      return res.status(200).json({ data: category, ok: true });
+      return res.status(200).json({ data: category, ok: true, message: "Category fetched successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -62,7 +93,7 @@ export const CategoryController = {
         { new: true }
       );
 
-      return res.status(200).json({ data: category, ok: true });
+      return res.status(200).json({ data: category, ok: true,message: "Category updated successfully"});
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -78,7 +109,7 @@ export const CategoryController = {
         deleteFile(category.image);
       }
 
-      return res.status(200).json({ data: category, ok: true });
+      return res.status(200).json({ data: category, ok: true ,message: "Category deleted successfully"});
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }

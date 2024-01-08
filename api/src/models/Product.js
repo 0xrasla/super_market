@@ -23,7 +23,7 @@ const ProductSchema = new Schema({
     ref: "Vendor",
     required: true,
   },
-  name: {
+  productName: {
     type: String,
     required: true,
   },
@@ -43,6 +43,15 @@ const ProductSchema = new Schema({
     type: String,
     required: true,
   },
+  gst: {
+    type: String,
+    required: true,
+  },
+  addedwarehouses:{
+    type: Schema.Types.ObjectId,
+    ref: "Warehouse",
+    required: true,
+  }
 });
 
 export default model("Product", ProductSchema);
