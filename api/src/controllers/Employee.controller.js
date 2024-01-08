@@ -1,5 +1,4 @@
 import Employee from "../models/Employee.js";
-import { deleteFile } from "../middlewares/upload.js";
 
 export const EmployeeController = {
   createEmployee: async (req, res) => {
@@ -24,7 +23,6 @@ export const EmployeeController = {
       let existing = await Employee.findOne({ name });
   
       if (existing) {
-       
         return res.status(409).json({ message: "Employee already exists" });
       }
   
