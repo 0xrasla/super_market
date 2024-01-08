@@ -24,7 +24,7 @@ export const EmployeeController = {
       let existing = await Employee.findOne({ name });
   
       if (existing) {
-        deleteFile(aadharupload);
+       
         return res.status(409).json({ message: "Employee already exists" });
       }
   
