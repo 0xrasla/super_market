@@ -6,8 +6,10 @@ interface Props {
   warehouseDeleteMutation: any;
   isLoading: boolean;
   setShowForm: any;
-  warehouseEditMutaion: any;
+  warehouseAddMutation: any;
   setIsEdit: any;
+  setDataId: any;
+  fromReset: any;
 }
 
 export function WarehouseTable({
@@ -15,8 +17,10 @@ export function WarehouseTable({
   isLoading,
   setShowForm,
   warehouseDeleteMutation,
-  warehouseEditMutaion,
+  warehouseAddMutation,
   setIsEdit,
+  setDataId,
+  fromReset,
 }: Props): JSX.Element {
   const rows = () => {
     if (isLoading) return [];
@@ -48,8 +52,11 @@ export function WarehouseTable({
             color='#00b207'
             className='cursor-pointer w-6 h-6'
             onClick={() => {
-              warehouseEditMutaion.mutate(_data);
+              warehouseAddMutation.mutate(_data);
               setIsEdit(true);
+              setShowForm(true);
+              console.log(_data);
+              setDataId(_data._id);
             }}
           />
         </Table.Td>
@@ -69,7 +76,10 @@ export function WarehouseTable({
           <Button
             className='bg-admin-dominant'
             rightSection={<Icon icon='material-symbols:add' />}
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setShowForm(true), setIsEdit(false);
+              fromReset();
+            }}
           >
             Create New
           </Button>

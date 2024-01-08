@@ -39,81 +39,86 @@ export function Warehouse() {
         return res.data;
       }),
   });
-
-  const warehouseAddMutation = useMutation({
-    mutationFn: (values: any) => {
-      return axios.post("/warehouse/add", values, {});
-    },
-    onSuccess: () => {
-      handleToast({
-        title: "Success",
-        color: "green",
-        message: "Warehouse added successfully",
-      });
-      refetchWarehouse();
-      form.reset();
-      setShowForm(false);
-    },
-    onError: (e: any) => {
-      console.log("Error");
-      const data: any = e.response?.data;
-      handleToast({
-        title: "Error",
-        color: "red",
-        message: data?.message || "Something went wrong",
-      });
-      setShowForm(true);
-    },
-  });
-
-  //is edit enabled
-
   const [isEdit, setIsEdit] = useState(false);
+  const [dataId, setDataId] = useState("");
 
-  const warehouseEditMutaion = useMutation({
-    mutationFn: async (_data: any) => {
-      console;
-      console.log("data", _data);
-      console.log(_data);
-      const response = await axios(`/warehouse?id=${_data._id}`);
-      const warehouseData = response.data.data;
-      const products = warehouseData.products;
-      console.log(products);
-      setShowForm(true);
-      if (warehouseData) {
-        form.setValues({
-          name: warehouseData.name,
-          address: warehouseData.address,
-          city: warehouseData.city,
-          location: warehouseData.location,
-          managername: warehouseData.managername,
-          mobilenumber: warehouseData.mobilenumber,
-          products: warehouseData.products,
-        });
-      }
+  const warehouseAddMutation = isEdit
+    ? useMutation({
+        mutationFn: async (_data: any) => {
+          console.log(isEdit, "booomer");
+          console.log(_data);
+          const response = await axios(`/warehouse?id=${dataId}`);
+          const warehouseData = response.data.data;
 
-      console.log(warehouseData._id);
-      return await axios.patch(`/warehouse?id=${warehouseData._id}`, _data, {});
-    },
-    onSuccess: () => {
-      handleToast({
-        title: "Success",
-        color: "green",
-        message: "Warehouse updated successfully",
+          if (warehouseData) {
+            form.setValues({
+              name: warehouseData.name,
+              address: warehouseData.address,
+              city: warehouseData.city,
+              location: warehouseData.location,
+              managername: warehouseData.managername,
+              mobilenumber: warehouseData.mobilenumber,
+              products: warehouseData.products,
+            });
+          }
+
+          console.log(warehouseData._id);
+          const updateResponse = await axios.patch(
+            `/warehouse?id=${warehouseData._id}`,
+            _data,
+            {}
+          );
+          console.log(updateResponse);
+          return updateResponse.data;
+        },
+        onSuccess: (e: any) => {
+          handleToast({
+            title: "Success",
+            color: "green",
+            message: "Warehouse updated successfully",
+          });
+          refetchWarehouse();
+        },
+        onError: (e: any) => {
+          console.log("Error", e);
+          const data: any = e.response?.data;
+          handleToast({
+            title: "Error",
+            color: "red",
+            message: data?.message || "Something went wrong",
+          });
+        },
+      })
+    : useMutation({
+        mutationFn: (values: any) => {
+          console.log(values);
+          console.log(isEdit);
+          return axios.post("/warehouse/add", values, {});
+        },
+        onSuccess: (e) => {
+          console.log(e);
+          if (e.data.ok == true) {
+            handleToast({
+              title: "Success",
+              color: "green",
+              message: "Warehouse added successfully",
+            });
+            refetchWarehouse();
+            form.reset();
+            setShowForm(false);
+          }
+        },
+        onError: (e: any) => {
+          console.log("Error");
+          const data: any = e.response?.data;
+          handleToast({
+            title: "Error",
+            color: "red",
+            message: data?.message || "Something went wrong",
+          });
+          setShowForm(true);
+        },
       });
-      // refetchWarehouse();
-      // form.reset();
-    },
-    onError: (e: any) => {
-      console.log("Error", e);
-      const data: any = e.response?.data;
-      handleToast({
-        title: "Error",
-        color: "red",
-        message: data?.message || "Something went wrong",
-      });
-    },
-  });
 
   const warehouseDeleteMutation = useMutation({
     mutationFn: (id: any) => {
@@ -213,6 +218,11 @@ export function Warehouse() {
   const handleAdd = () => {
     if (form.validate().hasErrors) return;
     warehouseAddMutation.mutate(form.values);
+    setShowForm(false);
+  };
+
+  const fromReset = () => {
+    form.reset();
   };
 
   return (
@@ -239,7 +249,9 @@ export function Warehouse() {
                           className='cursor-pointer'
                           icon='ic:outline-arrow-back'
                           fontSize={24}
-                          onClick={() => setShowForm(false)}
+                          onClick={() => {
+                            setShowForm(false), form.reset();
+                          }}
                         />
                         <Title
                           order={2}
@@ -248,22 +260,24 @@ export function Warehouse() {
                           fw={700}
                           ta='start'
                         >
-                          Add Ware House
+                          {isEdit ? "Edit Warehouse" : "Add Warehouse"}
                         </Title>
                       </div>
 
                       <div className='m-2'>
-                        <Button
-                          className='bg-admin-dominant'
-                          rightSection={<Icon icon='material-symbols:add' />}
-                          onClick={() => {
-                            form.insertListItem("products", {
-                              ...productForm,
-                            });
-                          }}
-                        >
-                          Add Product
-                        </Button>
+                        {isEdit ? null : (
+                          <Button
+                            className='bg-admin-dominant'
+                            rightSection={<Icon icon='material-symbols:add' />}
+                            onClick={() => {
+                              form.insertListItem("products", {
+                                ...productForm,
+                              });
+                            }}
+                          >
+                            Add Product
+                          </Button>
+                        )}
                       </div>
                     </div>
 
@@ -347,7 +361,9 @@ export function Warehouse() {
                       >
                         {warehouseAddMutation.isPending
                           ? "Loading..."
-                          : "Save Warehouse"}
+                          : isEdit
+                          ? "Edit Warehouse"
+                          : "Add Warehouse"}
                       </Button>
                     </Group>
                   </form>
@@ -506,10 +522,12 @@ export function Warehouse() {
             <WarehouseTable
               data={data}
               warehouseDeleteMutation={warehouseDeleteMutation}
-              warehouseEditMutaion={warehouseEditMutaion}
+              warehouseAddMutation={warehouseAddMutation}
               isLoading={isLoading}
               setShowForm={setShowForm}
               setIsEdit={setIsEdit}
+              setDataId={setDataId}
+              fromReset={fromReset}
             />
           )}
         </div>
