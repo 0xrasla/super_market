@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button, Table } from "@mantine/core";
+import { Button, Paper, Table } from "@mantine/core";
 
 interface Props {
   data: any;
@@ -65,7 +65,7 @@ export function WarehouseTable({
   };
 
   return (
-    <div className='p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[97%] items-start'>
+    <Paper shadow='' className='p-8 ml-4 mt-4 flex gap-4 w-[97%] items-start'>
       <div className='flex flex-col w-full'>
         <div className='flex justify-between m-2'>
           <h2 className='capitalize font-medium text-lg'>Warehouse List</h2>
@@ -100,6 +100,6 @@ export function WarehouseTable({
           <Table.Tbody>{rows()}</Table.Tbody>
         </Table>
       </div>
-    </div>
+    </Paper>
   );
 }
