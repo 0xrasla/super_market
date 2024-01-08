@@ -6,6 +6,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import { MantineProvider, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "./index.css";
 
@@ -25,20 +26,23 @@ import {
 } from "./pages/index.ts";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Singlewarehouse from "./components/Warehouse/Singlewarehouse.tsx";
+import Singlevendor from "./components/Vendor/Singlevendor.tsx";
 
 const theme = createTheme({});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <MantineProvider theme={theme}>
-    <Notifications position="top-right" />
+    <Notifications position='top-right' />
 
     <QueryClientProvider client={new QueryClient({})}>
+      <ReactQueryDevtools />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Loginpage />} />
+          <Route path='/' element={<Loginpage />} />
 
           <Route
-            path="/dashboard"
+            path='/dashboard'
             element={
               <DashboardLayout>
                 <Dashboard />
@@ -47,7 +51,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           />
 
           <Route
-            path="/warehouse"
+            path='/warehouse'
             element={
               <DashboardLayout>
                 <Warehouse />
@@ -56,7 +60,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           />
 
           <Route
-            path="/category"
+            path='/category'
             element={
               <DashboardLayout>
                 <Categories />
@@ -64,7 +68,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/vendor"
+            path='/vendor'
             element={
               <DashboardLayout>
                 <Vendor />
@@ -72,7 +76,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/products"
+            path='/products'
             element={
               <DashboardLayout>
                 <Products />
@@ -80,7 +84,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/employees"
+            path='/employees'
             element={
               <DashboardLayout>
                 <Employees />
@@ -88,7 +92,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/customer"
+            path='/customer'
             element={
               <DashboardLayout>
                 <Customers />
@@ -96,7 +100,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/shops"
+            path='/shops'
             element={
               <DashboardLayout>
                 <Shops />
@@ -104,10 +108,28 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
-            path="/settings"
+            path='/settings'
             element={
               <DashboardLayout>
                 <Settings />
+              </DashboardLayout>
+            }
+          />
+
+          <Route
+            path='/singlewarehouse/:id'
+            element={
+              <DashboardLayout>
+                <Singlewarehouse />
+              </DashboardLayout>
+            }
+          />
+
+          <Route
+            path='/singlevendor/:id'
+            element={
+              <DashboardLayout>
+                <Singlevendor />
               </DashboardLayout>
             }
           />
