@@ -1,39 +1,58 @@
 import Shop from "../models/Shop.js";
+import Product from "../models/Products.js";
 
 export const ShopController = {
   createShop: async (req, res) => {
-    const { name, location,email, ownername, mobilenumber, city, address } =
-      req.body;
+    const {
+      shopname,
+      location,
+      shopownername,
+      mobilenumber,
+      city,
+      address,
+      products,
+      email,
+    } = req.body;
 
     try {
       const newShop = {
-        name,
-        email,
+        shopname,
         location,
-        ownername,
+        shopownername,
         mobilenumber,
         city,
         address,
+        email
       };
 
-      let existing = await Shop.findOne({ name });
+      const existing = await Shop.findOneAndUpdate(
+        { shopname },
+        { $setOnInsert: newShop },
+        { upsert: true, new: true }
+      );
 
-      if (existing) {
-        return res.status(409).json({ message: "Shop already exists" });
-      }
+      const shop = existing;
+      const shopProducts = products.map((product) => ({
+        ...product,
+        shop: shop._id,
+      }));
 
-      const shop = await Shop.create(newShop);
+      const createdProducts = await Product.insertMany(shopProducts);
+      const productIds = createdProducts.map((product) => product._id);
+
+      shop.products = productIds;
+      await shop.save();
 
       return res.status(201).json({
         message: "Shop created successfully",
         ok: true,
         data: {
-          name: shop.name,
-          email:shop.email,
+          shopname: shop.shopname,
           location: shop.location,
-          ownername: shop.ownername,
+          shopownername: shop.shopownername,
           mobilenumber: shop.mobilenumber,
           city: shop.city,
+          email: shop.email,
           address: shop.address,
         },
       });
@@ -42,11 +61,42 @@ export const ShopController = {
     }
   },
 
-  getShopes: async (req, res) => {
-    try {
-      const shopes = await Shop.find();
+  getShops: async (req, res) => {
+    let { page, limit, search, startdate, enddate } = req.query;
 
-      return res.status(200).json({ data: shopes, ok: true });
+    try {
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+
+      const query = {};
+
+      if (search) {
+        query.shopname = {
+          $regex: search,
+          $options: "i",
+        };
+      }
+      if (startdate) {
+        query.createdAt = {
+          $gte: startdate,
+        };
+      }
+      if (enddate) {
+        query.createdAt = {
+          $lte: enddate,
+        };
+      }
+
+      const shops = await Shop.find(query)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("products")
+        .sort({ createdAt: -1 })
+        .exec();
+
+        const count = await Shop.countDocuments(query);
+
+      return res.status(200).json({ data: shops, ok: true, message: "Shops fetched successfully",count });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -58,7 +108,7 @@ export const ShopController = {
 
       const shop = await Shop.findById(id);
 
-      return res.status(200).json({ data: shop, ok: true });
+      return res.status(200).json({ data: shop, ok: true, message: "Shop fetched successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -70,7 +120,7 @@ export const ShopController = {
 
       const shop = await Shop.findByIdAndDelete(id);
 
-      return res.status(200).json({ data: shop, ok: true });
+      return res.status(200).json({ data: shop, ok: true, message: "Shop deleted successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -79,16 +129,21 @@ export const ShopController = {
   updateShop: async (req, res) => {
     try {
       const { id } = req.query;
-      const { name, location,email, ownername, mobilenumber, city, address } =
-        req.body;
+      const {
+        shopname,
+        location,
+        shopownername,
+        mobilenumber,
+        city,
+        address,
+      } = req.body;
 
       const shop = await Shop.findByIdAndUpdate(
         id,
         {
-          name,
-          email,
+          shopname,
           location,
-          ownername,
+          shopownername,
           mobilenumber,
           city,
           address,
@@ -96,9 +151,13 @@ export const ShopController = {
         { new: true }
       );
 
-      return res.status(200).json({ data: shop, ok: true });
+      return res.status(200).json({ data: shop, ok: true, message: "Shop updated successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
+  },
+
+  generatePdf: async (req, res) => {
+    // Your PDF generation logic goes here
   },
 };

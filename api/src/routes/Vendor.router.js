@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { VendorController } from "../controllers/Vendor.controller.js";
 import { body, query } from "express-validator";
+import { upload } from "../middlewares/upload.js";
 
 export const VendorRouter = Router()
   .post(
@@ -13,8 +14,10 @@ export const VendorRouter = Router()
     body("location").isString(),
     body("city").isString(),
     body("address").isString(),
-    body("accountnumber").isString(),
-    body("ifsc").isString(),
+    body("bankdetails.accountnumber").isString(),
+    body("bankdetails.ifsc").isString(),
+    body("kyc.aadharupload").isString(),
+    upload.single("aadharupload"),
     VendorController.createVendor
   )
   .get("/", query("id").isMongoId(), VendorController.getVendor)

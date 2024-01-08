@@ -15,6 +15,7 @@ export const ShopRouter = Router()
     ShopController.createShop
   )
   .get("/", query("id").isMongoId(), ShopController.getShop)
-  .get("/all", ShopController.getShopes)
+  .get("/all", ShopController.getShops)
   .patch("/", body("name").isString(), ShopController.updateShop)
-  .delete("/", query("id").isMongoId(), ShopController.deleteShop);
+  .delete("/", query("id").isMongoId(), ShopController.deleteShop)
+  .post("/generatepdf", ShopController.generatePdf)

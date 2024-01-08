@@ -1,5 +1,14 @@
 import { Schema, model } from "mongoose";
 
+const BankDetailsSchema = new Schema({
+  accountnumber: { type: String },
+  ifsc: { type: String },
+});
+
+const KYCDetailsSchema = new Schema({
+  aadharupload: { type: String },
+});
+
 const VendorSchema = new Schema({
   gstnumber: { type: String, required: true },
   businessname: { type: String },
@@ -9,9 +18,8 @@ const VendorSchema = new Schema({
   location: { type: String },
   city: { type: String },
   address: { type: String },
-  accountnumber: { type: String },
-  ifsc: { type: String },
-  aadharupload: { type: String },
+  bankdetails: { type: BankDetailsSchema }, 
+  kyc: { type: KYCDetailsSchema },
   products: [
     {
       type: Schema.Types.ObjectId,

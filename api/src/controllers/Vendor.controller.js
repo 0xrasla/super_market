@@ -1,69 +1,110 @@
 import Vendor from "../models/Vendor.js";
+import { deleteFile } from "../middlewares/upload.js";
+import Product from "../models/Products.js";
+
 
 export const VendorController = {
   createVendor: async (req, res) => {
-    const {   lotNumber,
-        rackNumber,
-        productName,
-        category,
-        vendor,
-        name,
-        price,
-        discount,
-        expirydate,
-        quantity, } =
-      req.body;
-
+    const {
+      gstnumber,
+      businessname,
+      vendorname,
+      mobilenumber,
+      email,
+      location,
+      city,
+      address,
+      bankdetails,
+      kyc,
+      products,
+    } = req.body;
+  
     try {
       const newVendor = {
-        lotNumber,
-        rackNumber,
-        productName,
-        category,
-        vendor,
-        name,
-        price,
-        discount,
-        expirydate,
-        quantity,
-        
+        gstnumber,
+        businessname,
+        vendorname,
+        mobilenumber,
+        email,
+        location,
+        city,
+        address,
+        bankdetails,
+        kyc,
       };
-
-      let existing = await Vendor.findOne({ gstnumber });
-
-      if (existing) {
-        return res.status(409).json({ message: "Vendor already exists" });
-      }
-
-      const vendor = await Vendor.create(newVendor);
-
+  
+      const existing = await Vendor.findOneAndUpdate(
+        { gstnumber },
+        { $setOnInsert: newVendor },
+        { upsert: true, new: true }
+      );
+  
+      const vendor = existing;
+      const vendorProducts = products.map((product) => ({
+        ...product,
+        vendor: vendor._id,
+      }));
+  
+      // Assuming there is a Product model defined
+      const createdProducts = await Product.insertMany(vendorProducts);
+      const productIds = createdProducts.map((product) => product._id);
+  
+      vendor.products = productIds;
+      await vendor.save();
+  
       return res.status(201).json({
-        message: "Vendor created successfully",
+        message: 'Vendor created successfully',
         ok: true,
         data: {
-            gstnumber: vendor.gstnumber,
-            businessname: vendor.businessname,
-            vendorname: vendor.vendorname,
+          gstnumber: vendor.gstnumber,
+          businessname: vendor.businessname,
+          vendorname: vendor.vendorname,
           mobilenumber: vendor.mobilenumber,
-          city: vendor.city,
-          address: vendor.address,
           email: vendor.email,
           location: vendor.location,
-          accountnumber: vendor.accountnumber,
-          ifsc: vendor.ifsc,
-          aadharupload: vendor.aadharupload
+          city: vendor.city,
+          address: vendor.address,
         },
       });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
   },
+  
 
   getVendors: async (req, res) => {
+    let { page, limit, search, startdate, enddate } = req.query;
     try {
-      const vendors = await Vendor.find();
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
 
-      return res.status(200).json({ data: vendors, ok: true });
+      const query = {};
+      if (search) {
+        query.vendorname = {
+          $regex: search,
+          $options: "i",
+        };
+      }
+      if (startdate) {
+        query.createdAt = {
+          $gte: startdate,
+        };
+      }
+      if (enddate) {
+        query.createdAt = {
+          $lte: enddate,
+        };
+      }
+      const vendors = await Vendor.find(query)
+      .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("products")
+        .sort({ createdAt: -1 })
+        .exec();
+
+        const count = await Vendor.countDocuments(query);
+
+      return res.status(200).json({ data: vendors, ok: true ,message: "Vendors fetched successfully",count});
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -75,7 +116,7 @@ export const VendorController = {
 
       const vendor = await Vendor.findById(id);
 
-      return res.status(200).json({ data: vendor, ok: true });
+      return res.status(200).json({ data: vendor, ok: true,message: "Vendor fetched successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -87,7 +128,7 @@ export const VendorController = {
 
       const vendor = await Vendor.findByIdAndDelete(id);
 
-      return res.status(200).json({ data: vendor, ok: true });
+      return res.status(200).json({ data: vendor, ok: true,message: "Vendor deleted successfully" });
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }
@@ -117,7 +158,7 @@ export const VendorController = {
         { new: true }
       );
 
-      return res.status(200).json({ data: vendor, ok: true });
+      return res.status(200).json({ data: vendor, ok: true ,message: "Vendor updated successfully"});
     } catch (e) {
       return res.status(500).json({ message: e.message, ok: false });
     }

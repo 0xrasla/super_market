@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
 const CustomerSchema = new Schema({
- type: { type: String },
-  name: { type: String },
+  type: { type: String, enum: ['shop', 'individual'] },
+  customername: { type: String },
   mobilenumber: { type: String },
   city: { type: String },
   email: { type: String },

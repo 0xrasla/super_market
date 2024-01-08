@@ -15,7 +15,7 @@ export const ProductRouter = Router()
     body("discount").isString(),
     body("expirydate").isString(),
     body("quantity").isString(),
-    body("gstnumber").isString(),
+    body("gst").isString(),
     ProductController.createProduct
   )
   .get("/", query("id").isMongoId(), ProductController.getProduct)
