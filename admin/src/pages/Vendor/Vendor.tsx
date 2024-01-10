@@ -23,7 +23,6 @@ import { WarehouseTable } from "../../components/Warehouse/Datatable-Warehouse";
 import { useNavigate } from "react-router-dom";
 
 export function Vendor() {
-
   const {
     data,
     isLoading,
@@ -141,11 +140,11 @@ export function Vendor() {
     vendorAddMutation.mutate(form.values);
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div>
-      <div className="w-full overflow-hidden">
+      <div className='w-full overflow-hidden'>
         {isLoading ? (
           "Loading..."
         ) : (
@@ -154,37 +153,37 @@ export function Vendor() {
               <Collapse
                 in={showForm}
                 transitionDuration={200}
-                transitionTimingFunction="linear"
+                transitionTimingFunction='linear'
               >
-                <div className="w-full flex">
-                  <div className="p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start">
+                <div className='w-full flex'>
+                  <div className='p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start'>
                     <form
                       onSubmit={form.onSubmit(() => handleAdd())}
-                      encType="multipart/form-data"
+                      encType='multipart/form-data'
                     >
-                      <div className="flex justify-between">
-                        <div className="flex gap-1 items-center">
+                      <div className='flex justify-between'>
+                        <div className='flex gap-1 items-center'>
                           <Icon
-                            className="cursor-pointer"
-                            icon="ic:outline-arrow-back"
+                            className='cursor-pointer'
+                            icon='ic:outline-arrow-back'
                             fontSize={24}
                             onClick={() => setShowForm(false)}
                           />
                           <Title
                             order={2}
-                            size="h3"
-                            className="font-poppins"
+                            size='h3'
+                            className='font-poppins'
                             fw={700}
-                            ta="start"
+                            ta='start'
                           >
-                            Add  Vendor
+                            Add Vendor
                           </Title>
                         </div>
 
-                        <div className="m-2">
+                        <div className='m-2'>
                           <Button
-                            className="bg-admin-dominant"
-                            rightSection={<Icon icon="material-symbols:add" />}
+                            className='bg-admin-dominant'
+                            rightSection={<Icon icon='material-symbols:add' />}
                             onClick={() => {
                               setProductFormCount((e) => e + 1);
                             }}
@@ -197,78 +196,78 @@ export function Vendor() {
                       <Grid>
                         <Grid.Col span={6}>
                           <TextInput
-                            label="Name"
-                            placeholder="Vendor Name"
-                            mt="md"
-                            name="name"
-                            variant="default"
+                            label='Name'
+                            placeholder='Vendor Name'
+                            mt='md'
+                            name='name'
+                            variant='default'
                             {...form.getInputProps("name")}
                           />
                         </Grid.Col>
 
                         <Grid.Col span={6}>
                           <TextInput
-                            label="Manager Name"
-                            placeholder="Manager Name"
-                            mt="md"
-                            name="managername"
-                            variant="default"
+                            label='Manager Name'
+                            placeholder='Manager Name'
+                            mt='md'
+                            name='managername'
+                            variant='default'
                             {...form.getInputProps("managername")}
                           />
                         </Grid.Col>
 
                         <Grid.Col span={6}>
                           <TextInput
-                            label="Location"
-                            placeholder="Lat/Long"
-                            mt="md"
-                            name="location"
-                            variant="default"
+                            label='Location'
+                            placeholder='Lat/Long'
+                            mt='md'
+                            name='location'
+                            variant='default'
                             {...form.getInputProps("location")}
                           />
                         </Grid.Col>
 
                         <Grid.Col span={6}>
                           <TextInput
-                            label="Mobile Number"
-                            placeholder="+91 XXXXXXXXXX"
-                            mt="md"
-                            name="mobile"
-                            variant="default"
+                            label='Mobile Number'
+                            placeholder='+91 XXXXXXXXXX'
+                            mt='md'
+                            name='mobile'
+                            variant='default'
                             {...form.getInputProps("mobile")}
                           />
                         </Grid.Col>
 
                         <Grid.Col span={6}>
                           <TextInput
-                            label="City"
-                            placeholder="Nagercoil"
-                            mt="md"
-                            name="city"
-                            variant="default"
+                            label='City'
+                            placeholder='Nagercoil'
+                            mt='md'
+                            name='city'
+                            variant='default'
                             {...form.getInputProps("city")}
                           />
                         </Grid.Col>
 
                         <Grid.Col span={6}>
                           <TextInput
-                            label="Address"
-                            placeholder="Address"
-                            mt="md"
-                            name="address"
-                            variant="default"
+                            label='Address'
+                            placeholder='Address'
+                            mt='md'
+                            name='address'
+                            variant='default'
                             {...form.getInputProps("address")}
                           />
                         </Grid.Col>
                       </Grid>
 
-                      <Group justify="start" mt="xl">
+                      <Group justify='start' mt='xl'>
                         <Button
-                          type="submit"
-                          size="md"
-                          variant="filled"
-                          className="bg-admin-dominant text-white w-full"
-                          leftSection={<Icon icon="material-symbols:add" />}
+                          type='submit'
+                          size='md'
+                          variant='filled'
+                          className='bg-admin-dominant text-white w-full'
+                          leftSection={<Icon icon='material-symbols:add' />}
                           loading={vendorAddMutation.isPending}
                           disabled={vendorAddMutation.isPending}
                         >
@@ -280,29 +279,29 @@ export function Vendor() {
                     </form>
                   </div>
 
-                  <Stack className="w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll">
+                  <Stack className='w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll'>
                     {Array.from({ length: productFormCount }).map(
                       (_, index) => (
                         <div
                           key={index}
-                          className="p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start"
+                          className='p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start'
                         >
                           <form
                             onSubmit={form.onSubmit(() => handleAdd())}
-                            encType="multipart/form-data"
+                            encType='multipart/form-data'
                           >
-                            <div className="flex justify-between">
+                            <div className='flex justify-between'>
                               <Title
                                 order={2}
-                                size="h3"
-                                className="font-poppins"
+                                size='h3'
+                                className='font-poppins'
                                 fw={700}
-                                ta="start"
+                                ta='start'
                               >
                                 Add Product ({index + 1})
                               </Title>
 
-                              <div className="m-2 flex gap-2 items-center">
+                              <div className='m-2 flex gap-2 items-center'>
                                 <CloseButton
                                   onClick={() => {
                                     setProductFormCount((e) => e - 1);
@@ -314,66 +313,66 @@ export function Vendor() {
                             <Grid>
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="Name"
-                                  placeholder="Vendor Name"
-                                  mt="md"
-                                  name="name"
-                                  variant="default"
+                                  label='Name'
+                                  placeholder='Vendor Name'
+                                  mt='md'
+                                  name='name'
+                                  variant='default'
                                   {...form.getInputProps("name")}
                                 />
                               </Grid.Col>
 
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="Manager Name"
-                                  placeholder="Manager Name"
-                                  mt="md"
-                                  name="managername"
-                                  variant="default"
+                                  label='Manager Name'
+                                  placeholder='Manager Name'
+                                  mt='md'
+                                  name='managername'
+                                  variant='default'
                                   {...form.getInputProps("managername")}
                                 />
                               </Grid.Col>
 
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="Location"
-                                  placeholder="Lat/Long"
-                                  mt="md"
-                                  name="location"
-                                  variant="default"
+                                  label='Location'
+                                  placeholder='Lat/Long'
+                                  mt='md'
+                                  name='location'
+                                  variant='default'
                                   {...form.getInputProps("location")}
                                 />
                               </Grid.Col>
 
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="Mobile Number"
-                                  placeholder="+91 XXXXXXXXXX"
-                                  mt="md"
-                                  name="mobile"
-                                  variant="default"
+                                  label='Mobile Number'
+                                  placeholder='+91 XXXXXXXXXX'
+                                  mt='md'
+                                  name='mobile'
+                                  variant='default'
                                   {...form.getInputProps("mobile")}
                                 />
                               </Grid.Col>
 
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="City"
-                                  placeholder="Nagercoil"
-                                  mt="md"
-                                  name="city"
-                                  variant="default"
+                                  label='City'
+                                  placeholder='Nagercoil'
+                                  mt='md'
+                                  name='city'
+                                  variant='default'
                                   {...form.getInputProps("city")}
                                 />
                               </Grid.Col>
 
                               <Grid.Col span={6}>
                                 <TextInput
-                                  label="Address"
-                                  placeholder="Address"
-                                  mt="md"
-                                  name="address"
-                                  variant="default"
+                                  label='Address'
+                                  placeholder='Address'
+                                  mt='md'
+                                  name='address'
+                                  variant='default'
                                   {...form.getInputProps("address")}
                                 />
                               </Grid.Col>
@@ -414,76 +413,79 @@ export function Vendor() {
               //   isLoading={isLoading}
               //   setShowForm={setShowForm}
               // />
-              <Paper className="p-8 shadow-sm border-2 min-h-[80vh] border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[87%] items-start">
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between m-2">
-                    <h2 className="capitalize font-medium text-xl">
+              <Paper className='p-8 shadow-sm border-2 min-h-[80vh] border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[87%] items-start'>
+                <div className='flex flex-col w-full'>
+                  <div className='flex justify-between m-2'>
+                    <h2 className='capitalize font-medium text-xl'>
                       Vendor List
                     </h2>
-                    <div className="flex gap-5 items-center">
+                    <div className='flex gap-5 items-center'>
                       <Button
-                        className="bg-admin-dominant"
-                        rightSection={<Icon icon="material-symbols:add" />}
+                        className='bg-admin-dominant'
+                        rightSection={<Icon icon='material-symbols:add' />}
                         onClick={() => setShowForm(true)}
                       >
                         Create New
                       </Button>
 
-                      <Button className="bg-red-600">Report</Button>
+                      <Button className='bg-red-600'>Report</Button>
                     </div>
                   </div>
                   <div>
-                    <div className="grid grid-cols-4 gap-6 p-3">
-                      <div onClick={() => navigate("/singlevendor/1")} className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
-                        <Text className="font-semibold">Business name</Text>
-                        <Space h="xs" />
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                    <div className='grid grid-cols-4 gap-6 p-3'>
+                      <div
+                        onClick={() => navigate("/singlevendor/1")}
+                        className='border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg'
+                      >
+                        <Text className='font-semibold'>Business name</Text>
+                        <Space h='xs' />
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           Vendor Name
                         </Text>
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           GST no :341325348
                         </Text>
                       </div>
-                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
-                        <Text className="font-semibold">Business name</Text>
-                        <Space h="xs" />
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                      <div className='border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg'>
+                        <Text className='font-semibold'>Business name</Text>
+                        <Space h='xs' />
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           Vendor Name
                         </Text>
-                        <Text className="text-[rgba(28,28,28,0.4)]">
-                          GST no :341325348
-                        </Text>
-                      </div>
-
-                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
-                        <Text className="font-semibold">Business name</Text>
-                        <Space h="xs" />
-                        <Text className="text-[rgba(28,28,28,0.4)]">
-                          Vendor Name
-                        </Text>
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           GST no :341325348
                         </Text>
                       </div>
 
-                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
-                        <Text className="font-semibold">Business name</Text>
-                        <Space h="xs" />
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                      <div className='border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg'>
+                        <Text className='font-semibold'>Business name</Text>
+                        <Space h='xs' />
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           Vendor Name
                         </Text>
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           GST no :341325348
                         </Text>
                       </div>
 
-                      <div className="border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg">
-                        <Text className="font-semibold">Business name</Text>
-                        <Space h="xs" />
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                      <div className='border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg'>
+                        <Text className='font-semibold'>Business name</Text>
+                        <Space h='xs' />
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           Vendor Name
                         </Text>
-                        <Text className="text-[rgba(28,28,28,0.4)]">
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
+                          GST no :341325348
+                        </Text>
+                      </div>
+
+                      <div className='border border-[rgba(233, 233, 233, 1)] p-4 pb-3 rounded-lg'>
+                        <Text className='font-semibold'>Business name</Text>
+                        <Space h='xs' />
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
+                          Vendor Name
+                        </Text>
+                        <Text className='text-[rgba(28,28,28,0.4)]'>
                           GST no :341325348
                         </Text>
                       </div>
