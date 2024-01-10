@@ -8,6 +8,7 @@ import {
   Group,
   NativeSelect,
   NumberInput,
+  Paper,
   Stack,
   TextInput,
   Title,
@@ -20,14 +21,17 @@ import { handleToast } from "../../config/Constants";
 import { WarehouseTable } from "../../components/Warehouse/Datatable-Warehouse";
 
 export function Warehouse() {
+  //pagination
+  const [page, setPage] = useState(1);
+  console.log("page", page);
   const {
     data,
     isLoading,
     refetch: refetchWarehouse,
   } = useQuery({
-    queryKey: [""],
+    queryKey: ["", page],
     queryFn: () =>
-      axios("/warehouse/all", {}).then((res) => {
+      axios(`/warehouse/all?page=${page}&limit=${10}`, {}).then((res) => {
         return res.data;
       }),
   });
@@ -42,13 +46,17 @@ export function Warehouse() {
   const [isEdit, setIsEdit] = useState(false);
   const [dataId, setDataId] = useState("");
 
-  const warehouseAddMutation = isEdit
-    ? useMutation({
-        mutationFn: async (_data: any) => {
-          console.log(isEdit, "booomer");
-          console.log(_data);
+  const warehouseAddMutation = useMutation({
+    mutationFn: async (_data: any) => {
+      try {
+        console.log(isEdit, "booomer");
+        console.log(_data);
+
+        let warehouseData;
+
+        if (isEdit) {
           const response = await axios(`/warehouse?id=${dataId}`);
-          const warehouseData = response.data.data;
+          warehouseData = response.data.data;
 
           if (warehouseData) {
             form.setValues({
@@ -58,67 +66,43 @@ export function Warehouse() {
               location: warehouseData.location,
               managername: warehouseData.managername,
               mobilenumber: warehouseData.mobilenumber,
-              products: warehouseData.products,
             });
           }
+        }
 
-          console.log(warehouseData._id);
-          const updateResponse = await axios.patch(
-            `/warehouse?id=${warehouseData._id}`,
-            _data,
-            {}
-          );
-          console.log(updateResponse);
-          return updateResponse.data;
-        },
-        onSuccess: (e: any) => {
-          handleToast({
-            title: "Success",
-            color: "green",
-            message: "Warehouse updated successfully",
-          });
-          refetchWarehouse();
-        },
-        onError: (e: any) => {
-          console.log("Error", e);
-          const data: any = e.response?.data;
-          handleToast({
-            title: "Error",
-            color: "red",
-            message: data?.message || "Something went wrong",
-          });
-        },
-      })
-    : useMutation({
-        mutationFn: (values: any) => {
-          console.log(values);
-          console.log(isEdit);
-          return axios.post("/warehouse/add", values, {});
-        },
-        onSuccess: (e) => {
-          console.log(e);
-          if (e.data.ok == true) {
-            handleToast({
-              title: "Success",
-              color: "green",
-              message: "Warehouse added successfully",
-            });
-            refetchWarehouse();
-            form.reset();
-            setShowForm(false);
-          }
-        },
-        onError: (e: any) => {
-          console.log("Error");
-          const data: any = e.response?.data;
-          handleToast({
-            title: "Error",
-            color: "red",
-            message: data?.message || "Something went wrong",
-          });
-          setShowForm(true);
-        },
+        const updateResponse = isEdit
+          ? await axios.patch(`/warehouse?id=${warehouseData._id}`, _data, {})
+          : await axios.post("/warehouse/add", _data, {});
+
+        console.log(updateResponse);
+        return updateResponse.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: (e: any) => {
+      console.log("Success", e.ok);
+      if (e.ok === true) {
+        handleToast({
+          title: "Success",
+          color: "green",
+          message: isEdit
+            ? "Warehouse updated successfully"
+            : "Warehouse added successfully",
+        });
+      }
+      refetchWarehouse();
+    },
+    onError: (e: any) => {
+      console.log("Error", e);
+      const data: any = e.response?.data;
+      handleToast({
+        title: "Error",
+        color: "red",
+        message: data?.message || "Something went wrong",
       });
+    },
+  });
 
   const warehouseDeleteMutation = useMutation({
     mutationFn: (id: any) => {
@@ -238,7 +222,11 @@ export function Warehouse() {
               transitionTimingFunction='linear'
             >
               <div className='w-full flex'>
-                <div className='p-8 border-2 h-fit border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 w-[40%] items-start'>
+                <Paper
+                  shadow='xl'
+                  radius={"xl"}
+                  className='p-8 h-fit  rounded-md ml-4 mt-4 flex gap-4 w-[45%] items-start'
+                >
                   <form
                     onSubmit={form.onSubmit(() => handleAdd())}
                     encType='multipart/form-data'
@@ -321,6 +309,7 @@ export function Warehouse() {
                           placeholder='+91 XXXXXXXXXX'
                           mt='md'
                           name='mobilenumber'
+                          hideControls
                           variant='default'
                           {...form.getInputProps("mobilenumber")}
                         />
@@ -355,7 +344,13 @@ export function Warehouse() {
                         size='md'
                         variant='filled'
                         className='bg-admin-dominant text-white w-full'
-                        leftSection={<Icon icon='material-symbols:add' />}
+                        leftSection={
+                          isEdit ? (
+                            <Icon icon='material-symbols:edit' />
+                          ) : (
+                            <Icon icon='material-symbols:add' />
+                          )
+                        }
                         loading={warehouseAddMutation.isPending}
                         disabled={warehouseAddMutation.isPending}
                       >
@@ -367,13 +362,15 @@ export function Warehouse() {
                       </Button>
                     </Group>
                   </form>
-                </div>
+                </Paper>
 
                 <Stack className='w-[40%] h-[calc(100vh-100px)] overflow-y-scroll hide-scroll'>
                   {form.values.products.map((_productform: any, index: any) => (
-                    <div
+                    <Paper
+                      shadow='xl'
+                      radius={"xl"}
                       key={index}
-                      className='p-8 border-2 border-solid border-gray-200 rounded-md ml-4 mt-4 flex gap-4 items-start'
+                      className='p-8 rounded-md ml-4 mt-4 flex gap-4 items-start'
                     >
                       <form encType='multipart/form-data'>
                         <div className='flex justify-between'>
@@ -513,7 +510,7 @@ export function Warehouse() {
                           </Grid.Col>
                         </Grid>
                       </form>
-                    </div>
+                    </Paper>
                   ))}
                 </Stack>
               </div>
@@ -528,6 +525,8 @@ export function Warehouse() {
               setIsEdit={setIsEdit}
               setDataId={setDataId}
               fromReset={fromReset}
+              setPage={setPage}
+              totalPages={Math.ceil(data?.count / 10)}
             />
           )}
         </div>
