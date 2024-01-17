@@ -1,12 +1,12 @@
-import axios from 'axios'
-import { API_URL } from './Constants'
+import axios from "axios";
+import { API_URL } from "./Constants";
 
 const instance = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
-    headers : {
-        'Access-Control-Allow-Origin': 'http://localhost:5173'
-    }
-}, )
+  baseURL: API_URL,
+  withCredentials: true,
+  headers: {
+    "Access-Control-Allow-Origin": API_URL,
+  },
+});
 
-export { instance as axios }
+export { instance as axios };
